@@ -1,5 +1,7 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 import { useEffect, useRef } from "react";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import Grass from "./geometry/Grass";
 
 function MyThree() {
   const refContainer = useRef(null);
@@ -7,7 +9,12 @@ function MyThree() {
   const initializeScene = (container) => {
     // Scene, Camera, Renderer
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
@@ -21,14 +28,35 @@ function MyThree() {
     // Camera Position
     camera.position.z = 5;
 
-    // Animation Loop
-    var animate = function () {
-      requestAnimationFrame(animate);
+    // Grass?
+    const grass = new Grass(30, 100000);
+    scene.add(grass);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.maxPolarAngle = Math.PI / 2.2;
+    controls.maxDistance = 15;
+
+    // Renderer loop
+    renderer.setAnimationLoop((time) => {
+      grass.update(time);
       cube.rotation.x += 0.01;
       cube.rotation.y += 0.01;
+
+      controls.update();
       renderer.render(scene, camera);
-    };
-    animate();
+    });
+
+    // // Animation Loop
+    // var animate = function () {
+    //   requestAnimationFrame(animate);
+    //   cube.rotation.x += 0.01;
+    //   cube.rotation.y += 0.01;
+    //   renderer.render(scene, camera);
+    // };
+    // animate();
   };
 
   useEffect(() => {
