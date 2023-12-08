@@ -108,11 +108,11 @@ const LTree = (props: Props) => {
     const axiom = "X";
     const rules = {
       F: "FX[FX[+XF]]",
-      X: "FF[+XZ++X-F[+ZX]][-X++F-X]",
+      X: "FF[+XZ++X-F[+ZX]][-X+F-X]",
       Z: "[+F-X-F][++ZX]",
     };
 
-    const iterations = 4;
+    const iterations = 3;
 
     // Generate the L-system string
     let currentString = axiom;
@@ -125,7 +125,8 @@ const LTree = (props: Props) => {
 
   const drawTree = (generationString: string) => {
     // variables
-    const turnAngle = -Math.PI / 9;
+    const turnAngleX = -Math.PI / 9;
+    const turnAngleZ = Math.PI / 10;
     const drawLength = 0.15;
 
     // Set up state
@@ -149,12 +150,13 @@ const LTree = (props: Props) => {
           // forward
           const newX = turtle.x + Math.cos(turtle.angleX) * drawLength;
           const newY = turtle.y + Math.sin(turtle.angleX) * drawLength;
+          const newZ = turtle.z + Math.sin(turtle.angleZ) * drawLength;
           // draw
           newObjects.push(
             <Line
               points={[
                 [turtle.x, turtle.y, turtle.z],
-                [newX, newY, turtle.z],
+                [newX, newY, newZ],
               ]} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
               color="black" // Default
               lineWidth={2} // In pixels (default)
@@ -165,14 +167,17 @@ const LTree = (props: Props) => {
           // update state
           turtle.x = newX;
           turtle.y = newY;
+          turtle.z = newZ;
           break;
         case "+":
           // Turn right
-          turtle.angleX += turnAngle; // Adjust the angle as needed
+          turtle.angleX += turnAngleX; // Adjust the angle as needed
+          turtle.angleZ += turnAngleZ;
           break;
         case "-":
           // Turn left
-          turtle.angleX -= turnAngle; // Adjust the angle as needed
+          turtle.angleX -= turnAngleX; // Adjust the angle as needed
+          turtle.angleZ -= turnAngleZ;
           break;
         case "[":
           // Push current state to stack
@@ -191,6 +196,7 @@ const LTree = (props: Props) => {
           if (!state) return;
           turtle.x = state.x;
           turtle.y = state.y;
+          turtle.z = state.z;
           turtle.angleX = state.angleX;
           break;
       }

@@ -92,8 +92,8 @@ const FoliageApp = () => {
             border: "none",
             outline: "none",
             borderRadius: "4px",
-            backgroundColor: activeMode === "summer" ? "#000000" : "#0ea5e9",
-            color: "#ffffff",
+            backgroundColor: activeMode === "summer" ? "#ec4899" : "#f1f5f9",
+            color: activeMode === "summer" ? "#ffffff" : "#94a3b8",
           }}
         >
           <MdSunny />
@@ -111,8 +111,8 @@ const FoliageApp = () => {
             border: "none",
             outline: "none",
             borderRadius: "4px",
-            backgroundColor: activeMode === "winter" ? "#000000" : "#0ea5e9",
-            color: "#ffffff",
+            backgroundColor: activeMode === "winter" ? "#ec4899" : "#f1f5f9",
+            color: activeMode === "winter" ? "#ffffff" : "#94a3b8",
           }}
         >
           <FaRegSnowflake />
