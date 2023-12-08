@@ -1,9 +1,11 @@
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Box, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import Sky from "./Sky";
-import { Color, MathUtils } from "three";
 import { Tree } from "./Tree";
+import Ground from "./Ground";
+import Flower from "./l-system/Flower";
+import LTree from "./l-system/LTree";
 
 const FoliageApp = () => {
   return (
@@ -14,27 +16,19 @@ const FoliageApp = () => {
           height: "100vh",
           backgroundColor: "transparent",
         }}
-        // camera={{ near: 0.1, far: 1000 }}
       >
-        <Tree />
+        <LTree />
+        {/* <Tree /> */}
         {/* Ground */}
-        <mesh
-          name="ground"
-          rotation={[MathUtils.degToRad(-90), 0, 0]}
-          receiveShadow
-        >
-          <circleGeometry args={[3, 50]} />
-          <meshStandardMaterial
-            color={new Color("#88f95f").convertLinearToSRGB()}
-          />
-        </mesh>
+        <Ground />
+        <Sky />
+        {/* Lights */}
         <hemisphereLight
           color="#f85555"
           intensity={1.0}
           groundColor="#362907"
         />
         <directionalLight position={[1, 1, 1]} intensity={1} />
-        <ambientLight intensity={1.0} />
         <directionalLight
           castShadow
           position={[2.5, 8, 5]}
@@ -47,7 +41,9 @@ const FoliageApp = () => {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-        {/* <pointLight position={[-10, 0, -20]} color="#eef4aa" intensity={0.5} /> */}
+        <ambientLight intensity={1.0} />
+        <pointLight position={[-10, 0, -20]} color="#eef4aa" intensity={0.5} />
+        {/* Controls */}
         <PerspectiveCamera
           far={2000}
           fov={80}
@@ -56,11 +52,6 @@ const FoliageApp = () => {
           position={[0, 4, 10]}
         />
         <OrbitControls />
-        <Sky />
-        {/* <mesh rotation={[0, 10, 0]}>
-          <boxGeometry attach="geometry" args={[1, 1, 1]} />
-          <meshStandardMaterial attach="material" color={"#6be092"} />
-        </mesh> */}
       </Canvas>
     </div>
   );

@@ -6,7 +6,13 @@ export function Tree({ position, rotation }) {
   const tree = useGLTF("https://douges.dev/static/tree.glb");
 
   return (
-    <group name="tree" rotation={rotation} position={position}>
+    <group
+      name="tree"
+      rotation={rotation}
+      position={position}
+      onClick={() => {}}
+      scale={1.2}
+    >
       <Clone
         receiveShadow
         castShadow
