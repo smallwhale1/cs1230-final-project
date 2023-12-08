@@ -1,11 +1,23 @@
 import { Box, OrbitControls, PerspectiveCamera } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import { useEffect } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
-import Flower from "./l-system/Flower";
 import LTree from "./l-system/LTree";
+import * as THREE from "three";
+
+const VanillaWrapper = () => {
+  const { size, scene } = useThree();
+
+  useEffect(() => {
+    // vanilla test
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+  }, []);
+};
 
 const FoliageApp = () => {
   return (
@@ -17,6 +29,7 @@ const FoliageApp = () => {
           backgroundColor: "transparent",
         }}
       >
+        {/* <VanillaWrapper /> */}
         <LTree />
         {/* <Tree /> */}
         {/* Ground */}
