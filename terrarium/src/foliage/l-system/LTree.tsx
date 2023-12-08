@@ -125,8 +125,8 @@ const LTree = (props: Props) => {
 
   const drawTree = (generationString: string) => {
     // variables
-    const turnAngle = Math.PI / 9;
-    const drawLength = 0.2;
+    const turnAngle = -Math.PI / 9;
+    const drawLength = 0.15;
 
     // Set up state
     let turtle: Turtle = {

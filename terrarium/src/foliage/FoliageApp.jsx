@@ -1,11 +1,13 @@
 import { Box, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
 import LTree from "./l-system/LTree";
 import * as THREE from "three";
+import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
+import { FaRegSnowflake } from "react-icons/fa";
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -20,6 +22,7 @@ const VanillaWrapper = () => {
 };
 
 const FoliageApp = () => {
+  const [activeMode, setActiveMode] = useState("summer");
   return (
     <div style={{ width: "100%", height: "100vh", position: "relative" }}>
       <Canvas
@@ -30,7 +33,8 @@ const FoliageApp = () => {
         }}
       >
         {/* <VanillaWrapper /> */}
-        <LTree />
+        {activeMode === "summer" ? <Tree /> : <LTree />}
+        {/* <LTree /> */}
         {/* <Tree /> */}
         {/* Ground */}
         <Ground />
@@ -66,6 +70,54 @@ const FoliageApp = () => {
         />
         <OrbitControls />
       </Canvas>
+      <div
+        style={{
+          position: "absolute",
+          top: "1rem",
+          right: "1rem",
+          display: "flex",
+          gap: "8px",
+        }}
+      >
+        <button
+          onClick={() => setActiveMode("summer")}
+          className="icon-btn"
+          style={{
+            cursor: "pointer",
+            width: "32px",
+            height: "32px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            border: "none",
+            outline: "none",
+            borderRadius: "4px",
+            backgroundColor: activeMode === "summer" ? "#000000" : "#0ea5e9",
+            color: "#ffffff",
+          }}
+        >
+          <MdSunny />
+        </button>
+        <button
+          onClick={() => setActiveMode("winter")}
+          className="icon-btn"
+          style={{
+            cursor: "pointer",
+            width: "32px",
+            height: "32px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            border: "none",
+            outline: "none",
+            borderRadius: "4px",
+            backgroundColor: activeMode === "winter" ? "#000000" : "#0ea5e9",
+            color: "#ffffff",
+          }}
+        >
+          <FaRegSnowflake />
+        </button>
+      </div>
     </div>
   );
 };
