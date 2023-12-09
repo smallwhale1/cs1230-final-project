@@ -112,6 +112,12 @@ const LTree = (props: Props) => {
       Z: "[+F-X-F][++ZX]",
     };
 
+    // const rules = {
+    //   F: "FF",
+    //   X: "F+[-F-XF-X][+FF][--XF[+X]][++F-X]",
+    //   Z: "[+F-X-F][++ZX]",
+    // };
+
     const iterations = 3;
 
     // Generate the L-system string
@@ -125,9 +131,9 @@ const LTree = (props: Props) => {
 
   const drawTree = (generationString: string) => {
     // variables
-    const turnAngleX = -Math.PI / 9;
+    const turnAngleX = -Math.PI / 15;
     const turnAngleZ = Math.PI / 10;
-    const drawLength = 0.15;
+    const drawLength = 0.3;
 
     // Set up state
     let turtle: Turtle = {
@@ -150,9 +156,10 @@ const LTree = (props: Props) => {
           // forward
           const newX = turtle.x + Math.cos(turtle.angleX) * drawLength;
           const newY = turtle.y + Math.sin(turtle.angleX) * drawLength;
-          const newZ = turtle.z + Math.sin(turtle.angleZ) * drawLength;
+          const newZ = turtle.z + Math.sin(turtle.angleZ) * 0.1;
           // draw
           newObjects.push(
+            // <Cylinder args={[1, 1]} position={} rotation={}/>
             <Line
               points={[
                 [turtle.x, turtle.y, turtle.z],
