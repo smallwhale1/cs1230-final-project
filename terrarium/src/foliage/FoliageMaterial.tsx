@@ -33,7 +33,7 @@ export function FoliageMaterial() {
       alphaMap={alphaMap}
       alphaTest={0.5}
       baseMaterial={MeshStandardMaterial}
-      color={new Color("#f880ec").convertLinearToSRGB()}
+      color={new Color("#fa6daa").convertLinearToSRGB()}
       ref={ref}
       uniforms={uniforms}
       vertexShader={vert}

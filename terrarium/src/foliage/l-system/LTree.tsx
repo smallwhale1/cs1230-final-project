@@ -1,8 +1,9 @@
-import { Cylinder, Line } from "@react-three/drei";
+import { Clone, Cylinder, Line, Sphere, useGLTF } from "@react-three/drei";
 import { Turtle, applyRules } from "./generator";
 import { useEffect, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { FoliageMaterial } from "../FoliageMaterial";
 
 type Props = {};
 
@@ -103,12 +104,13 @@ const TreeGenerator = () => {
 
 const LTree = (props: Props) => {
   const [objects, setObjects] = useState<JSX.Element[]>([]);
+  const tree = useGLTF("https://douges.dev/static/tree.glb");
 
   const generateTree = () => {
     const axiom = "X";
     const rules = {
       F: "FX[FX[+XF]]",
-      X: "FF[+XZ++X-F[+ZX]][-X+F-X]",
+      X: "F+F-[+X-Z++X-F[+ZX]][-X+F-X]",
       Z: "[+F-X-F][++ZX]",
     };
 
@@ -126,14 +128,23 @@ const LTree = (props: Props) => {
       currentString = applyRules(currentString, rules);
     }
 
+    currentString = currentString
+      .split("")
+      .filter((char) => !["Z", "X"].includes(char))
+      .join("");
+    console.log(currentString);
+
     drawTree(currentString);
   };
 
   const drawTree = (generationString: string) => {
     // variables
-    const turnAngleX = -Math.PI / 15;
+    const turnAngleX = -Math.PI / 10;
     const turnAngleZ = Math.PI / 10;
-    const drawLength = 0.3;
+    const drawLengthX = 0.3;
+    const drawLengthZ = 0.1;
+    const shortDrawLengthX = 0.001;
+    const shortDrawLengthZ = 0.001;
 
     // Set up state
     let turtle: Turtle = {
@@ -141,7 +152,7 @@ const LTree = (props: Props) => {
       y: 0,
       z: 0,
       // angles
-      angleX: Math.PI / 2,
+      angleX: Math.PI / 2 + 0.2,
       angleY: -Math.PI / 2,
       angleZ: 0,
     };
@@ -149,14 +160,33 @@ const LTree = (props: Props) => {
     const stack: Turtle[] = [];
     const newObjects = [];
 
+    // if the location is not saved, it is the last branch there
+
     for (let i = 0; i < generationString.length; i++) {
       const current = generationString[i];
+      let newX = 0;
+      let newY = 0;
+      let newZ = 0;
       switch (current) {
         case "F":
-          // forward
-          const newX = turtle.x + Math.cos(turtle.angleX) * drawLength;
-          const newY = turtle.y + Math.sin(turtle.angleX) * drawLength;
-          const newZ = turtle.z + Math.sin(turtle.angleZ) * 0.1;
+          newX = turtle.x + Math.cos(turtle.angleX) * drawLengthX;
+          newY = turtle.y + Math.sin(turtle.angleX) * drawLengthX;
+          newZ = turtle.z + Math.sin(turtle.angleZ) * drawLengthZ;
+          //   if (
+          //     i != generationString.length - 1 &&
+          //     generationString[i + 1] != "["
+          //   ) {
+          //     // forward
+          //     newX = turtle.x + Math.cos(turtle.angleX) * shortDrawLengthX;
+          //     newY = turtle.y + Math.sin(turtle.angleX) * shortDrawLengthX;
+          //     newZ = turtle.z + Math.sin(turtle.angleZ) * shortDrawLengthZ;
+          //   } else {
+          //     // forward
+          //     newX = turtle.x + Math.cos(turtle.angleX) * drawLengthX;
+          //     newY = turtle.y + Math.sin(turtle.angleX) * drawLengthX;
+          //     newZ = turtle.z + Math.sin(turtle.angleZ) * drawLengthZ;
+          //   }
+
           // draw
           newObjects.push(
             // <Cylinder args={[1, 1]} position={} rotation={}/>
@@ -165,12 +195,22 @@ const LTree = (props: Props) => {
                 [turtle.x, turtle.y, turtle.z],
                 [newX, newY, newZ],
               ]} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
-              color="black" // Default
-              lineWidth={2} // In pixels (default)
+              color="#733b3b" // Default
+              lineWidth={8} // In pixels (default)
               segments // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
               dashed={false} // Default
             />
           );
+
+          //   if (
+          //     i != generationString.length - 1 &&
+          //     generationString[i + 1] != "["
+          //   ) {
+          //     newObjects.push(
+          //       // <Cylinder args={[1, 1]} position={} rotation={}/>
+          //       <Sphere position={[newX, newY, newZ]} args={[0.01]} />
+          //     );
+          //   }
           // update state
           turtle.x = newX;
           turtle.y = newY;
@@ -219,6 +259,14 @@ const LTree = (props: Props) => {
   return (
     <group>
       {objects}
+      <Clone
+        scale={1.3}
+        position={[-1.5, 4, 0]}
+        receiveShadow
+        castShadow
+        object={tree.nodes.foliage}
+        inject={<FoliageMaterial />}
+      />
       {/* <TreeGenerator /> */}
       {/* <Line
         points={[
