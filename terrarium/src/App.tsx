@@ -5,6 +5,7 @@ import "./App.css";
 import { OrbitControls, Box, Plane } from "@react-three/drei";
 import * as THREE from "three"; // Import THREE
 import { Canvas, useThree } from "@react-three/fiber";
+import SceneContainer from "./SceneContainer";
 
 function SkyBox() {
   // highlight-start
@@ -30,24 +31,7 @@ function App() {
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <Canvas>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <Box position={[-1.2, 0, 0]}>
-          <meshStandardMaterial color={"orange"} />
-        </Box>
-        <Box position={[1.2, 0, 0]}>
-          <meshStandardMaterial color={"blue"} />
-        </Box>
-
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <primitive
-            object={new THREE.CircleGeometry(5, 32)}
-            attach="geometry"
-          />
-          <meshStandardMaterial color={"lightblue"} />
-        </mesh>
-        <OrbitControls />
-        <SkyBox />
+       <SceneContainer />
       </Canvas>
     </div>
   );
