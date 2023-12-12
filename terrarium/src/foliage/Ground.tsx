@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Clock, MathUtils, PlaneGeometry, ShaderMaterial, TextureLoader, Vector2 } from "three";
+import { Box3, BufferGeometry, CircleGeometry, Clock, EllipseCurve, MathUtils, PlaneGeometry, ShaderMaterial, TextureLoader, Vector2, Vector3 } from "three";
 import { extend, useLoader, useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { BufferAttribute, Color, Mesh, MeshStandardMaterial, Object3D } from 'three';
@@ -447,12 +447,12 @@ const Pebbles = () => {
 
 
 const WaterComponent = (props: Props) => {
-  const waterGeometry = new PlaneGeometry( 5, 5);
-  const waterRef = useRef<Water>(null);
-  const clock = new Clock();
-  const flowMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/water/Water_1_M_Flow.jpg");
+  // var waterGeometry = new PlaneGeometry( 1.5, 2.4);
+  
+  var waterGeometry = new CircleGeometry( 1.562, 30);
 
-  const water = new Water( waterGeometry, {
+  const flowMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/water/Water_1_M_Flow.jpg");
+  var water = new Water( waterGeometry, {
     color: '#ffffff',
     scale: 4,
     flowDirection: new Vector2(1.0, 1.0 ),
@@ -460,53 +460,46 @@ const WaterComponent = (props: Props) => {
     textureHeight: 1024,
     flowMap: flowMap
   } );
+  const { scene } = useThree();
 
-  water.position.y = 1;
-  water.rotation.x = Math.PI * - 0.5;
+  
+  const object = scene.getObjectByName("Ellipse_4");
+  if (object && object instanceof Mesh && object.material && object.geometry) {
 
-  const flowSpeed = 0.03;  // Adjust if needed
-  const cycle = 0.15;      // Adjust if needed
-  const halfCycle = cycle * 0.5;
+    // Create the water using the mesh's geometry
+    // waterGeometry = object.geometry; // If you want to use the mesh's geometry
+    // Or create a new PlaneGeometry with the size of the bounding box
+    // waterGeometry = object.geometry.clone();
 
-  useEffect(() => {
-    if (waterRef.current) {
-      const water = waterRef.current;
-      const shaderMaterial = water.material as ShaderMaterial;
-      shaderMaterial.uniforms['config'].value.x = 0;
-      shaderMaterial.uniforms['config'].value.y = halfCycle;
-    }
-  }, []);
+    water = new Water( waterGeometry, {
+      color: '#ffffff',
+      scale: 3,
+      flowDirection: new Vector2(1.0, 1.0 ),
+      textureWidth: 1024,
+      textureHeight: 1024,
+      flowMap: flowMap
+    } );
+    console.log('local ', object.position)
 
-  useFrame(() => {
-    if (waterRef.current) {
-      const water = waterRef.current;
-      const delta = clock.getDelta();
-      const shaderMaterial = water.material as ShaderMaterial;
-      const config = shaderMaterial.uniforms['config'];
+    object.position.y -= 1.2;
 
-      config.value.x += flowSpeed * delta; // flowMapOffset0
-      config.value.y = config.value.x + halfCycle; // flowMapOffset1
-
-      if (config.value.x >= cycle) {
-        config.value.x = 0;
-        config.value.y = halfCycle;
-      } else if (config.value.y >= cycle) {
-        config.value.y -= cycle;
-      }
-    }
-  });
-
-
+    var target = new Vector3(0,0,0)
+    const ret = object.getWorldPosition(target)
+    console.log('world ', ret)
+  }
 
 
   return (
+    (object && object instanceof Mesh && object.material && object.geometry &&
+
     <primitive
       object={water}
-      position={[0, 0.4, 0]}
+      position={[-0.7399999926239252,-0.0001,-0.66368191229517947]}
       rotation={[-Math.PI / 2, 0, 0]}
-      // scale={0.4}
+      // rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+      // scale={0.01}
       {...props}
-    />
+    />)
   );
 
 };
@@ -514,16 +507,16 @@ const WaterComponent = (props: Props) => {
 const Ground = (props: Props) => {
   return (
     <>
-      <mesh
+      {/* <mesh
         name="ground"
         rotation={[MathUtils.degToRad(-90), 0, 0]}
         receiveShadow
       >
-        <circleGeometry args={[3, 50]} />
+        <circleGeometry args={[2, 50]} />
         <meshStandardMaterial
           color={new Color("#88f95f").convertLinearToSRGB()}
         />
-      </mesh>
+      </mesh> */}
       <WaterComponent />
       <Pebbles />
       {/* <SceneS /> */}
