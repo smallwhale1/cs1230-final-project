@@ -40,9 +40,9 @@ export const TreeGenerator = () => {
       y: 200,
       z: 0,
       // angles
-      angleX: -Math.PI / 2,
-      angleY: -Math.PI / 2,
-      angleZ: -Math.PI / 2,
+      yaw: -Math.PI / 2,
+      pitch: -Math.PI / 2,
+      roll: -Math.PI / 2,
     };
 
     const stack: Turtle[] = [];
@@ -52,8 +52,8 @@ export const TreeGenerator = () => {
       switch (current) {
         case "F":
           // forward
-          const newX = turtle.x + Math.cos(turtle.angleX) * drawLength;
-          const newY = turtle.y + Math.sin(turtle.angleX) * drawLength;
+          const newX = turtle.x + Math.cos(turtle.yaw) * drawLength;
+          const newY = turtle.y + Math.sin(turtle.yaw) * drawLength;
           // draw
 
           // update state
@@ -62,11 +62,11 @@ export const TreeGenerator = () => {
           break;
         case "+":
           // Turn right
-          turtle.angleX += turnAngle; // Adjust the angle as needed
+          turtle.yaw += turnAngle; // Adjust the angle as needed
           break;
         case "-":
           // Turn left
-          turtle.angleX -= turnAngle; // Adjust the angle as needed
+          turtle.yaw -= turnAngle; // Adjust the angle as needed
           break;
         case "[":
           // Push current state to stack
@@ -74,9 +74,9 @@ export const TreeGenerator = () => {
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
-            angleX: turtle.angleX,
-            angleY: turtle.angleY,
-            angleZ: turtle.angleZ,
+            yaw: turtle.yaw,
+            pitch: turtle.pitch,
+            roll: turtle.roll,
           });
           break;
         case "]":
@@ -85,7 +85,7 @@ export const TreeGenerator = () => {
           if (!state) return;
           turtle.x = state.x;
           turtle.y = state.y;
-          turtle.angleX = state.angleX;
+          turtle.yaw = state.yaw;
           break;
       }
     }
@@ -183,9 +183,9 @@ const LTree = (props: Props) => {
       y: 0,
       z: 0,
       // angles
-      angleX: Math.PI / 2 + 0.2,
-      angleY: -Math.PI / 2,
-      angleZ: 0,
+      yaw: Math.PI / 2 + 0.2,
+      pitch: -Math.PI / 2,
+      roll: 0,
     };
 
     const stack: Turtle[] = [];
@@ -200,9 +200,9 @@ const LTree = (props: Props) => {
       let newZ = 0;
       switch (current) {
         case "F":
-          newX = turtle.x + Math.cos(turtle.angleX) * drawLengthX;
-          newY = turtle.y + Math.sin(turtle.angleX) * drawLengthX;
-          newZ = turtle.z + Math.sin(turtle.angleZ) * drawLengthZ;
+          newX = turtle.x + Math.cos(turtle.yaw) * drawLengthX;
+          newY = turtle.y + Math.sin(turtle.yaw) * drawLengthX;
+          newZ = turtle.z + Math.sin(turtle.roll) * drawLengthZ;
           //   if (
           //     i != generationString.length - 1 &&
           //     generationString[i + 1] != "["
@@ -249,13 +249,13 @@ const LTree = (props: Props) => {
           break;
         case "+":
           // Turn right
-          turtle.angleX += turnAngleX; // Adjust the angle as needed
-          turtle.angleZ += turnAngleZ;
+          turtle.yaw += turnAngleX; // Adjust the angle as needed
+          turtle.roll += turnAngleZ;
           break;
         case "-":
           // Turn left
-          turtle.angleX -= turnAngleX; // Adjust the angle as needed
-          turtle.angleZ -= turnAngleZ;
+          turtle.yaw -= turnAngleX; // Adjust the angle as needed
+          turtle.roll -= turnAngleZ;
           break;
         case "[":
           // Push current state to stack
@@ -263,9 +263,9 @@ const LTree = (props: Props) => {
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
-            angleX: turtle.angleX,
-            angleY: turtle.angleY,
-            angleZ: turtle.angleZ,
+            yaw: turtle.yaw,
+            pitch: turtle.pitch,
+            roll: turtle.roll,
           });
           break;
         case "]":
@@ -275,7 +275,7 @@ const LTree = (props: Props) => {
           turtle.x = state.x;
           turtle.y = state.y;
           turtle.z = state.z;
-          turtle.angleX = state.angleX;
+          turtle.yaw = state.yaw;
           break;
       }
     }

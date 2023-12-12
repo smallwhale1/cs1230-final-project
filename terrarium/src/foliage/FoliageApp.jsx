@@ -35,12 +35,12 @@ const FoliageApp = () => {
         }}
       >
         {/* <VanillaWrapper /> */}
-        {/* <Plant /> */}
+        <Plant />
         {/* <TreeGenerator /> */}
         {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
         {/* <LTree /> */}
-        <GlassSphere />
-        <Tree />
+        {/* <GlassSphere />
+        <Tree /> */}
         <Ground />
         <Sky />
         {/* Lights */}
