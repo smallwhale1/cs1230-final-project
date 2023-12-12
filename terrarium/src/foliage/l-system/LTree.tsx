@@ -7,7 +7,7 @@ import { FoliageMaterial } from "../FoliageMaterial";
 
 type Props = {};
 
-const TreeGenerator = () => {
+export const TreeGenerator = () => {
   const { size, scene } = useThree();
 
   const generateTree = () => {
@@ -114,12 +114,6 @@ const LTree = (props: Props) => {
       Z: "[+F-X-F][++ZX]",
     };
 
-    // const rules = {
-    //   F: "FF",
-    //   X: "F+[-F-XF-X][+FF][--XF[+X]][++F-X]",
-    //   Z: "[+F-X-F][++ZX]",
-    // };
-
     const iterations = 3;
 
     // Generate the L-system string
@@ -136,6 +130,43 @@ const LTree = (props: Props) => {
 
     drawTree(currentString);
   };
+
+  //   const positionCylinder = () => {
+  //     // Assuming you have a line defined by two Vector3 points: startPoint and endPoint
+  //     const startPoint = new THREE.Vector3(x1, y1, z1);
+  //     const endPoint = new THREE.Vector3(x2, y2, z2);
+
+  //     // Calculate the length and direction of the line
+  //     const length = startPoint.distanceTo(endPoint);
+  //     const direction = new THREE.Vector3()
+  //       .subVectors(endPoint, startPoint)
+  //       .normalize();
+
+  //     // Create a cylinder geometry
+  //     const cylinderGeometry = new THREE.CylinderBufferGeometry(
+  //       radius,
+  //       radius,
+  //       length,
+  //       radialSegments
+  //     );
+
+  //     // Create a cylinder material
+  //     const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+  //     // Create a cylinder mesh
+  //     const cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+
+  //     // Position the cylinder at the midpoint of the line
+  //     cylinderMesh.position.copy(
+  //       startPoint.clone().add(endPoint).multiplyScalar(0.5)
+  //     );
+
+  //     // Orient the cylinder along the line using the lookAt method
+  //     cylinderMesh.lookAt(endPoint);
+
+  //     // Add the cylinder to the scene
+  //     scene.add(cylinderMesh);
+  //   };
 
   const drawTree = (generationString: string) => {
     // variables
@@ -196,7 +227,7 @@ const LTree = (props: Props) => {
                 [newX, newY, newZ],
               ]} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
               color="#733b3b" // Default
-              lineWidth={8} // In pixels (default)
+              lineWidth={2} // In pixels (default)
               segments // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
               dashed={false} // Default
             />
@@ -257,16 +288,16 @@ const LTree = (props: Props) => {
     // wait until flower loads potentially
   }, []);
   return (
-    <group>
+    <group position={[1, 0, -1]}>
       {objects}
-      <Clone
-        scale={1.3}
-        position={[-1.5, 4, 0]}
+      {/* <Clone
+        scale={1.5}
+        position={[-1.5, 3.6, 0]}
         receiveShadow
         castShadow
         object={tree.nodes.foliage}
         inject={<FoliageMaterial />}
-      />
+      /> */}
       {/* <TreeGenerator /> */}
       {/* <Line
         points={[

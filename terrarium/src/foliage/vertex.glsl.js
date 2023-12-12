@@ -14,8 +14,8 @@ float remap(float v, float inMin, float inMax, float outMin, float outMax) {
 }
 
 mat4 rotateZ(float radians) {
-  float c = cos(radians);
-  float s = sin(radians);
+  float c = cos(radians) * 1.0;
+  float s = sin(radians) * 1.0;
 
 	return mat4(
     c, -s, 0, 0,
@@ -45,7 +45,7 @@ vec2 calcInitialOffsetFromUVs() {
 
   // Invert the vertex offset so it's positioned towards the camera.
   offset *= vec2(-1.0, 1.0);
-  offset = normalize(offset) * u_scale;
+  offset = normalize(offset) * 1.0;
 
   return offset;
 }

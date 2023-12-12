@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
-import LTree from "./l-system/LTree";
+import LTree, { TreeGenerator } from "./l-system/LTree";
 import * as THREE from "three";
 import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
 import { FaRegSnowflake } from "react-icons/fa";
+import Plant from "./l-system/Plant";
+import GlassSphere from "./GlassSphere";
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -33,10 +35,12 @@ const FoliageApp = () => {
         }}
       >
         {/* <VanillaWrapper /> */}
-        {activeMode === "summer" ? <Tree /> : <LTree />}
+        {/* <Plant /> */}
+        {/* <TreeGenerator /> */}
+        {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
         {/* <LTree /> */}
-        {/* <Tree /> */}
-        {/* Ground */}
+        <GlassSphere />
+        <Tree />
         <Ground />
         <Sky />
         {/* Lights */}
