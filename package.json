@@ -1,0 +1,19 @@
+{
+  "name": "cs1230-final-project",
+  "version": "1.0.0",
+  "description": "cs1230 fall23 final project!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smallwhale1/cs1230-final-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smallwhale1/cs1230-final-project/issues"
+  },
+  "homepage": "https://github.com/smallwhale1/cs1230-final-project#readme"
+}
