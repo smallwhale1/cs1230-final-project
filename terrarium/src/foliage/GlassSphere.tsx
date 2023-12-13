@@ -5,9 +5,10 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 interface Props {
   setSceneLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+  refraction: number;
 }
 
-const GlassSphere = ({ setSceneLoaded }: Props) => {
+const GlassSphere = ({ setSceneLoaded, refraction }: Props) => {
   const { scene } = useThree();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const GlassSphere = ({ setSceneLoaded }: Props) => {
     });
 
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.scale.set(5.2, 5.2, 5.2);
+    mesh.scale.set(5.5, 5.5, 5.5);
     mesh.position.y += 2;
 
     scene.add(mesh);

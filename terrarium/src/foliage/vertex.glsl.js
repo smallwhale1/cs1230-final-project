@@ -24,13 +24,13 @@ mat4 rotateZ(float radians) {
 }
 
 vec4 applyWind(vec4 v) {
-  float boundedYNormal = remap(normal.y, -1.0, 1.0, 0.0, 1.0);
-  float posXZ = position.y + position.x;
+  float remappedNormal = remap(normal.y, -1.0, 1.0, 0.0, 1.0);
+  float pos = position.y + position.x;
   float pow = windSpeed / 5.0 * -0.3;
 
-  float bottomFacing = remap(cos(windTime + posXZ), -1.0, 1.0, 0.0, 0.02);
-  float topFacing = remap(sin(windTime + posXZ), -1.0, 1.0, 0.0, pow);
-  float radians = mix(bottomFacing, topFacing, boundedYNormal);
+  float b = remap(cos(windTime + pos), -1.0, 1.0, 0.0, 0.02);
+  float t = remap(sin(windTime + pos), -1.0, 1.0, 0.0, pow);
+  float radians = mix(b, t, remappedNormal);
 
   return rotateZ(radians) * v;
 }
@@ -48,23 +48,17 @@ vec2 calculateInitialOffsetFromUVs() {
   return offset;
 }
 
-vec3 inflateOffset(vec3 offset) {
-  return offset + normal.xyz * 0.0;
-}
-
 void main() {
   vec2 vertexOffset = calculateInitialOffsetFromUVs();
-  vec3 inflatedVertexOffset = inflateOffset(vec3(vertexOffset, 0.0));
+  vec3 inflatedVertexOffset = vec3(vertexOffset, 0.0) + normal.xyz * 0.01;
 
   vec4 worldViewPosition = modelViewMatrix * vec4(position, 1.0);
 
-  // Apply the effect blend
   worldViewPosition += vec4(mix(vec3(0.5), inflatedVertexOffset, 1.0), 0.0);
 
-  // Apply wind effect
+  // wind
   worldViewPosition = applyWind(worldViewPosition);
 
-  // Output position for cascaded shadow mapping
   csm_PositionRaw = projectionMatrix * worldViewPosition;
 }`;
 

@@ -16,6 +16,7 @@ export interface Turtle {
   z: number;
   front: Vector3;
   out: Vector3;
+  width: number;
   yaw: number;
   pitch: number;
   roll: number;
