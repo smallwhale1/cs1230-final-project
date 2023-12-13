@@ -9,6 +9,9 @@ import * as THREE from "three";
 import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
 import { FaRegSnowflake } from "react-icons/fa";
 import GlassSphere from "./GlassSphere";
+import ReactAudioPlayer from 'react-audio-player';
+import { AudioListener, Audio, AudioLoader } from 'three';
+
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -20,6 +23,26 @@ const VanillaWrapper = () => {
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
   }, []);
+};
+
+const SceneAudio = () => {
+  const { camera } = useThree();
+  const listener = new THREE.AudioListener();
+  camera.add( listener );
+
+  // create a global audio source
+  const sound = new THREE.Audio( listener );
+
+  // load a sound and set it as the Audio object's buffer
+  const audioLoader = new THREE.AudioLoader();
+  audioLoader.load( '/models/Dear_Katara.ogg', function( buffer ) {
+    sound.setBuffer( buffer );
+    sound.setLoop( true );
+    sound.setVolume( 0.5 );
+    sound.play();
+  });
+
+  return null; // Nothing needs to be rendered by this component
 };
 
 const FoliageApp = () => {
@@ -40,6 +63,12 @@ const FoliageApp = () => {
         {/* Ground */}
         <GlassSphere />
         <Ground />
+        {/* <ReactAudioPlayer
+          src="/models/dear_katara.ogg"
+          autoPlay
+          controls
+        /> */}
+        <SceneAudio />
         <Sky />
         {/* Lights */}
         <hemisphereLight

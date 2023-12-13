@@ -13,6 +13,7 @@ root.render(
   <React.StrictMode>
     {/* <App /> */}
     <FoliageApp />
+    
   </React.StrictMode>
 );
 
