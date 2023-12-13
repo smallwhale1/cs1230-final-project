@@ -146,7 +146,7 @@ const SceneAdjustments = (props: Props) => {
     metalnessMap: aoRoughMetalMap
  }); 
  const rock = scene.getObjectByName("big_rocks");
- console.log("looking for rock, ", rock);
+
  if(rock) {
    const rock1 = rock.children[0]
    const rock2 = rock.children[1]
@@ -162,10 +162,10 @@ const SceneAdjustments = (props: Props) => {
     rock3.material = floorMat
    }
  }
+}
 
  
-  
-}
+
 const Ground = (props: Props) => {
   SceneAdjustments([]);
 
