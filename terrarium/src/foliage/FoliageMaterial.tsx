@@ -6,7 +6,11 @@ import CustomShaderMaterial from "three-custom-shader-material";
 import vert from "./vertex.glsl.js";
 
 // Tree colors: "#65b231"
-export function FoliageMaterial() {
+
+interface Props {
+  color: string;
+}
+export function FoliageMaterial({ color }: Props) {
   const ref = useRef(null);
   const alphaMap = useTexture("/assets/foliage-texture.jpg");
 
@@ -31,9 +35,9 @@ export function FoliageMaterial() {
   return (
     <CustomShaderMaterial
       alphaMap={alphaMap}
-      alphaTest={0.2}
+      alphaTest={0.3}
       baseMaterial={MeshStandardMaterial}
-      color={new Color("#ff5da1").convertLinearToSRGB()}
+      color={new Color(color).convertLinearToSRGB()}
       ref={ref}
       uniforms={uniforms}
       vertexShader={vert}

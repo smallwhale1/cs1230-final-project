@@ -1,4 +1,9 @@
-import { Box, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import {
+  Box,
+  OrbitControls,
+  PerspectiveCamera,
+  Plane,
+} from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import Sky from "./Sky";
@@ -9,9 +14,9 @@ import * as THREE from "three";
 import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
 import { FaRegSnowflake } from "react-icons/fa";
 import GlassSphere from "./GlassSphere";
-import ReactAudioPlayer from 'react-audio-player';
-import { AudioListener, Audio, AudioLoader } from 'three';
-
+import ReactAudioPlayer from "react-audio-player";
+import { AudioListener, Audio, AudioLoader } from "three";
+import Plant from "./l-system/Plant";
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -60,15 +65,15 @@ const FoliageApp = () => {
         {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
         {/* <LTree /> */}
         <Tree />
-        {/* Ground */}
         <GlassSphere />
+        <Plant />
         <Ground />
         {/* <ReactAudioPlayer
           src="/models/dear_katara.ogg"
           autoPlay
           controls
         /> */}
-        <SceneAudio />
+        {/* <SceneAudio /> */}
         <Sky />
         {/* Lights */}
         <hemisphereLight
