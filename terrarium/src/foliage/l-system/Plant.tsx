@@ -1,7 +1,7 @@
-import { Clone, Cylinder, Line, useGLTF } from "@react-three/drei";
+import { Clone, useGLTF } from "@react-three/drei";
 import React, { useEffect, useRef, useState } from "react";
-import { MeshBasicMaterial, Vector3 } from "three";
-import { Turtle, TurtleSimple, applyRules } from "./generator";
+import { Vector3 } from "three";
+import { Turtle } from "./generator";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 
@@ -10,7 +10,11 @@ type Props = {
 };
 
 export interface LSystemControls {
-  angle: number;
+  angle1: number;
+  angle2: number;
+  width: number;
+  height: number;
+  leafChance: number;
 }
 
 interface ParameterizedSymbol {
@@ -19,7 +23,7 @@ interface ParameterizedSymbol {
 }
 
 // const offsetVector: Vector3 = new Vector3(-1.9, 0.2, 0.25);
-const offsetVector: Vector3 = new Vector3(0, 0.2, 0);
+const offsetVector: Vector3 = new Vector3(0, -0.2, 0);
 const scaleBack = 0.75;
 
 const degToRad = (deg: number): number => {
@@ -119,39 +123,14 @@ const Plant = ({ lSystemState }: Props) => {
     const iterations = 10;
     const r1 = 0.55;
     const r2 = 0.95;
-    const a1 = -5;
-    const a2 = lSystemState.angle;
+    const a1 = lSystemState.angle2;
+    const a2 = lSystemState.angle1;
     const y1 = 137;
     const y2 = 137;
     const w0 = 20;
     const q = 0.45;
     const e = 0.5;
     const min = 0.5;
-
-    // initialize params
-    // const iterations = 10;
-    // const r1 = 0.75;
-    // const r2 = 0.77;
-    // const a1 = 20;
-    // const a2 = -20;
-    // const y1 = 0;
-    // const y2 = 0;
-    // const w0 = 30;
-    // const q = 0.5;
-    // const e = 0.4;
-    // const min = 0.0;
-
-    // const iterations = 9;
-    // const r1 = 0.5;
-    // const r2 = 0.85;
-    // const a1 = 25;
-    // const a2 = -15;
-    // const y1 = 180;
-    // const y2 = 0;
-    // const w0 = 20;
-    // const q = 0.45;
-    // const e = 0.5;
-    // const min = 0.5;
 
     const axiom: ParameterizedSymbol[] = [{ symbol: "A", params: [100, w0] }];
 
@@ -210,14 +189,14 @@ const Plant = ({ lSystemState }: Props) => {
   const drawSystem = (symbols: ParameterizedSymbol[]) => {
     const stack: Turtle[] = [];
     const newObjects = [];
-    const scale = 0.0015;
+    const scale = lSystemState.height * 0.00075;
 
     // Set up state
     let turtle: Turtle = {
       x: 0,
       y: 0,
       z: 0,
-      width: 0.01,
+      width: lSystemState.width * 0.01,
       front: new Vector3(0, 1, 0),
       out: new Vector3(0, 0, 1),
       // angle
@@ -244,8 +223,7 @@ const Plant = ({ lSystemState }: Props) => {
           const dist = new Vector3(0, 0, 0).distanceTo(finalPoint);
 
           if (dist >= 0.5) {
-            console.log("more");
-            if (dist >= 1 || Math.random() < 0.5) {
+            if (dist >= 1 || Math.random() < lSystemState.leafChance) {
               newObjects.push(
                 <Clone
                   scale={0.2}
@@ -262,23 +240,6 @@ const Plant = ({ lSystemState }: Props) => {
               );
             }
           }
-
-          //   newObjects.push(
-          //     <Line
-          //       points={[initPoint, finalPoint]}
-          //       color="#254620" // Default
-          //       lineWidth={1} // In pixels (default)
-          //     />
-          //   );
-
-          // newObjects.push(
-          //   <Cylinder
-          //     args={[0.002, 0.002, cylData.length, 6, 4, false]}
-          //     position={cylData.pos}
-          //     rotation={cylData.rot}
-          //   />
-          // );
-
           // update state
           turtle.x = finalPoint.x;
           turtle.y = finalPoint.y;
@@ -368,9 +329,6 @@ const Plant = ({ lSystemState }: Props) => {
         <primitive object={pot.nodes.pCylinder1} />
       </mesh>
       {objects}
-      {/* <mesh rotation={[0, 0 * ((2 * Math.PI) / 4), 0]}>
-        <primitive object={leafy.scene} />
-      </mesh> */}
     </group>
   );
 };

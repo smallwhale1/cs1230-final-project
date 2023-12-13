@@ -43,7 +43,11 @@ const FoliageApp = () => {
   const [sceneloaded, setSceneLoaded] = useState(false);
   const [refraction, setRefraction] = useState(0.1);
   const [lsystemState, setLSystemState] = useState<LSystemControls>({
-    angle: 30,
+    angle1: 30,
+    angle2: -5,
+    width: 1,
+    height: 2,
+    leafChance: 0.5,
   });
 
   return (
@@ -66,7 +70,7 @@ const FoliageApp = () => {
         {/* <VanillaWrapper /> */}
         {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
         {/* <Tree /> */}
-        <GlassSphere refraction={refraction} setSceneLoaded={setSceneLoaded} />
+        {/* <GlassSphere refraction={refraction} setSceneLoaded={setSceneLoaded} /> */}
         <Plant lSystemState={lsystemState} />
         {/* <Ground /> */}
         {/* <ReactAudioPlayer
@@ -124,14 +128,43 @@ const FoliageApp = () => {
         }}
       >
         <div style={{ width: 200 }}>
+          {/* Angle 1 */}
           <Slider
             onChange={(e, val) => {
-              setLSystemState({ angle: val as number });
+              setLSystemState((prev) => ({ ...prev, angle1: val as number }));
             }}
             size="small"
+            step={2}
             min={10}
-            max={60}
-            defaultValue={30}
+            max={40}
+            value={lsystemState.angle1}
+            aria-label="Small"
+            valueLabelDisplay="auto"
+          />
+          {/* Angle 2 */}
+          <Slider
+            onChange={(e, val) => {
+              setLSystemState((prev) => ({ ...prev, angle2: val as number }));
+            }}
+            size="small"
+            min={-20}
+            max={-5}
+            value={lsystemState.angle2}
+            aria-label="Small"
+            valueLabelDisplay="auto"
+          />
+          <Slider
+            onChange={(e, val) => {
+              setLSystemState((prev) => ({
+                ...prev,
+                leafChance: val as number,
+              }));
+            }}
+            size="small"
+            min={0.2}
+            max={0.6}
+            step={0.1}
+            value={lsystemState.leafChance}
             aria-label="Small"
             valueLabelDisplay="auto"
           />
