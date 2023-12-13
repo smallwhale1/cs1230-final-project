@@ -134,46 +134,7 @@ const FoliageApp = () => {
           display: "flex",
           gap: "8px",
         }}
-      >
-        <button
-          onClick={() => setActiveMode("summer")}
-          className="icon-btn"
-          style={{
-            cursor: "pointer",
-            width: "32px",
-            height: "32px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "none",
-            outline: "none",
-            borderRadius: "4px",
-            backgroundColor: activeMode === "summer" ? "#ec4899" : "#f1f5f9",
-            color: activeMode === "summer" ? "#ffffff" : "#94a3b8",
-          }}
-        >
-          <MdSunny />
-        </button>
-        <button
-          onClick={() => setActiveMode("winter")}
-          className="icon-btn"
-          style={{
-            cursor: "pointer",
-            width: "32px",
-            height: "32px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "none",
-            outline: "none",
-            borderRadius: "4px",
-            backgroundColor: activeMode === "winter" ? "#ec4899" : "#f1f5f9",
-            color: activeMode === "winter" ? "#ffffff" : "#94a3b8",
-          }}
-        >
-          <FaRegSnowflake />
-        </button>
-      </div>
+      ></div>
     </div>
   );
 };
