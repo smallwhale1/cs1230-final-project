@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import Stats from 'stats.js';
 import {
   Box3,
   BufferGeometry,
@@ -36,24 +37,23 @@ const MainScene = () => {
   // thanks to https://polyhaven.com/textures !
   const gltf = useLoader(
     GLTFLoader,
-    process.env.PUBLIC_URL + "/models/terrarium-flowered.glb"
+    process.env.PUBLIC_URL + "/models/terrarium-w-butterfly.glb"
   );
 
   useEffect(() => {
     if (!gltf) return;
+    console.log(gltf.scenes)
 
     gltf.scene.traverse((object) => {
-      console.log(object.name, object.type); // Log the name and type of each object
 
       if (object.isObject3D) {
         const mesh = object as Mesh;
+        if(mesh.name === 'wings') {
+          mesh.visible = false;
+        }
 
-        // Handle mesh-specific logic
-        // if (mesh.material instanceof MeshStandardMaterial) {
-        //   mesh.material.color = new Color(0.8, 0.9, 0.9);
-        // }
       } else if (object) {
-        // Handle group-specific logic
+
         console.log("Group found: ", object);
       }
     });
@@ -120,7 +120,31 @@ const WaterComponent = (props: Props) => {
   );
 };
 
+
+const MyComponentWithStats = () => {
+  const stats = useRef(new Stats());
+
+  useEffect(() => {
+    stats.current.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(stats.current.dom);
+
+    return () => {
+      document.body.removeChild(stats.current.dom);
+    };
+  }, []);
+
+  useFrame(() => {
+    stats.current.begin();
+    // monitored code goes here
+    stats.current.end();
+  });
+
+  // ...rest of your component
+};
+
+
 const SceneAdjustments = (props: Props) => {
+  MyComponentWithStats()
   const { scene } = useThree();
   const object = scene.getObjectByName("bench");
   console.log("looking for bench, ", object);
@@ -162,6 +186,12 @@ const SceneAdjustments = (props: Props) => {
     rock3.material = floorMat
    }
  }
+
+ const wings = scene.getObjectByName("wings");
+  if (wings) {
+    console.log('bf found')
+  }
+
 }
 
  
