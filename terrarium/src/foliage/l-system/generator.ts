@@ -3,9 +3,9 @@ export interface Turtle {
   x: number;
   y: number;
   z: number;
-  angleX: number;
-  angleY: number;
-  angleZ: number;
+  yaw: number;
+  pitch: number;
+  roll: number;
 }
 
 export const applyRules = (sentence: string, rules: any) => {

@@ -7,7 +7,7 @@ import { FoliageMaterial } from "../FoliageMaterial";
 
 type Props = {};
 
-const TreeGenerator = () => {
+export const TreeGenerator = () => {
   const { size, scene } = useThree();
 
   const generateTree = () => {
@@ -40,9 +40,9 @@ const TreeGenerator = () => {
       y: 200,
       z: 0,
       // angles
-      angleX: -Math.PI / 2,
-      angleY: -Math.PI / 2,
-      angleZ: -Math.PI / 2,
+      yaw: -Math.PI / 2,
+      pitch: -Math.PI / 2,
+      roll: -Math.PI / 2,
     };
 
     const stack: Turtle[] = [];
@@ -52,8 +52,8 @@ const TreeGenerator = () => {
       switch (current) {
         case "F":
           // forward
-          const newX = turtle.x + Math.cos(turtle.angleX) * drawLength;
-          const newY = turtle.y + Math.sin(turtle.angleX) * drawLength;
+          const newX = turtle.x + Math.cos(turtle.yaw) * drawLength;
+          const newY = turtle.y + Math.sin(turtle.yaw) * drawLength;
           // draw
 
           // update state
@@ -62,11 +62,11 @@ const TreeGenerator = () => {
           break;
         case "+":
           // Turn right
-          turtle.angleX += turnAngle; // Adjust the angle as needed
+          turtle.yaw += turnAngle; // Adjust the angle as needed
           break;
         case "-":
           // Turn left
-          turtle.angleX -= turnAngle; // Adjust the angle as needed
+          turtle.yaw -= turnAngle; // Adjust the angle as needed
           break;
         case "[":
           // Push current state to stack
@@ -74,9 +74,9 @@ const TreeGenerator = () => {
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
-            angleX: turtle.angleX,
-            angleY: turtle.angleY,
-            angleZ: turtle.angleZ,
+            yaw: turtle.yaw,
+            pitch: turtle.pitch,
+            roll: turtle.roll,
           });
           break;
         case "]":
@@ -85,7 +85,7 @@ const TreeGenerator = () => {
           if (!state) return;
           turtle.x = state.x;
           turtle.y = state.y;
-          turtle.angleX = state.angleX;
+          turtle.yaw = state.yaw;
           break;
       }
     }
@@ -114,12 +114,6 @@ const LTree = (props: Props) => {
       Z: "[+F-X-F][++ZX]",
     };
 
-    // const rules = {
-    //   F: "FF",
-    //   X: "F+[-F-XF-X][+FF][--XF[+X]][++F-X]",
-    //   Z: "[+F-X-F][++ZX]",
-    // };
-
     const iterations = 3;
 
     // Generate the L-system string
@@ -137,6 +131,43 @@ const LTree = (props: Props) => {
     drawTree(currentString);
   };
 
+  //   const positionCylinder = () => {
+  //     // Assuming you have a line defined by two Vector3 points: startPoint and endPoint
+  //     const startPoint = new THREE.Vector3(x1, y1, z1);
+  //     const endPoint = new THREE.Vector3(x2, y2, z2);
+
+  //     // Calculate the length and direction of the line
+  //     const length = startPoint.distanceTo(endPoint);
+  //     const direction = new THREE.Vector3()
+  //       .subVectors(endPoint, startPoint)
+  //       .normalize();
+
+  //     // Create a cylinder geometry
+  //     const cylinderGeometry = new THREE.CylinderBufferGeometry(
+  //       radius,
+  //       radius,
+  //       length,
+  //       radialSegments
+  //     );
+
+  //     // Create a cylinder material
+  //     const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+  //     // Create a cylinder mesh
+  //     const cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+
+  //     // Position the cylinder at the midpoint of the line
+  //     cylinderMesh.position.copy(
+  //       startPoint.clone().add(endPoint).multiplyScalar(0.5)
+  //     );
+
+  //     // Orient the cylinder along the line using the lookAt method
+  //     cylinderMesh.lookAt(endPoint);
+
+  //     // Add the cylinder to the scene
+  //     scene.add(cylinderMesh);
+  //   };
+
   const drawTree = (generationString: string) => {
     // variables
     const turnAngleX = -Math.PI / 10;
@@ -152,9 +183,9 @@ const LTree = (props: Props) => {
       y: 0,
       z: 0,
       // angles
-      angleX: Math.PI / 2 + 0.2,
-      angleY: -Math.PI / 2,
-      angleZ: 0,
+      yaw: Math.PI / 2 + 0.2,
+      pitch: -Math.PI / 2,
+      roll: 0,
     };
 
     const stack: Turtle[] = [];
@@ -169,9 +200,9 @@ const LTree = (props: Props) => {
       let newZ = 0;
       switch (current) {
         case "F":
-          newX = turtle.x + Math.cos(turtle.angleX) * drawLengthX;
-          newY = turtle.y + Math.sin(turtle.angleX) * drawLengthX;
-          newZ = turtle.z + Math.sin(turtle.angleZ) * drawLengthZ;
+          newX = turtle.x + Math.cos(turtle.yaw) * drawLengthX;
+          newY = turtle.y + Math.sin(turtle.yaw) * drawLengthX;
+          newZ = turtle.z + Math.sin(turtle.roll) * drawLengthZ;
           //   if (
           //     i != generationString.length - 1 &&
           //     generationString[i + 1] != "["
@@ -196,7 +227,7 @@ const LTree = (props: Props) => {
                 [newX, newY, newZ],
               ]} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
               color="#733b3b" // Default
-              lineWidth={8} // In pixels (default)
+              lineWidth={2} // In pixels (default)
               segments // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
               dashed={false} // Default
             />
@@ -218,13 +249,13 @@ const LTree = (props: Props) => {
           break;
         case "+":
           // Turn right
-          turtle.angleX += turnAngleX; // Adjust the angle as needed
-          turtle.angleZ += turnAngleZ;
+          turtle.yaw += turnAngleX; // Adjust the angle as needed
+          turtle.roll += turnAngleZ;
           break;
         case "-":
           // Turn left
-          turtle.angleX -= turnAngleX; // Adjust the angle as needed
-          turtle.angleZ -= turnAngleZ;
+          turtle.yaw -= turnAngleX; // Adjust the angle as needed
+          turtle.roll -= turnAngleZ;
           break;
         case "[":
           // Push current state to stack
@@ -232,9 +263,9 @@ const LTree = (props: Props) => {
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
-            angleX: turtle.angleX,
-            angleY: turtle.angleY,
-            angleZ: turtle.angleZ,
+            yaw: turtle.yaw,
+            pitch: turtle.pitch,
+            roll: turtle.roll,
           });
           break;
         case "]":
@@ -244,7 +275,7 @@ const LTree = (props: Props) => {
           turtle.x = state.x;
           turtle.y = state.y;
           turtle.z = state.z;
-          turtle.angleX = state.angleX;
+          turtle.yaw = state.yaw;
           break;
       }
     }
@@ -257,16 +288,16 @@ const LTree = (props: Props) => {
     // wait until flower loads potentially
   }, []);
   return (
-    <group>
+    <group position={[1, 0, -1]}>
       {objects}
-      <Clone
-        scale={1.3}
-        position={[-1.5, 4, 0]}
+      {/* <Clone
+        scale={1.5}
+        position={[-1.5, 3.6, 0]}
         receiveShadow
         castShadow
         object={tree.nodes.foliage}
         inject={<FoliageMaterial />}
-      />
+      /> */}
       {/* <TreeGenerator /> */}
       {/* <Line
         points={[
