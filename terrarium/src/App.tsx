@@ -6,6 +6,7 @@ import { OrbitControls, Box, Plane } from "@react-three/drei";
 import * as THREE from "three"; // Import THREE
 import { Canvas, useThree } from "@react-three/fiber";
 import SceneContainer from "./SceneContainer";
+import MyThree from "./particles/particleapp";
 
 function SkyBox() {
   // highlight-start

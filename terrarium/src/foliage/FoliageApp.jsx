@@ -8,6 +8,7 @@ import LTree from "./l-system/LTree";
 import * as THREE from "three";
 import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
 import { FaRegSnowflake } from "react-icons/fa";
+import MyThree from "../particles/particleapp";
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -35,9 +36,10 @@ const FoliageApp = () => {
         {/* <VanillaWrapper /> */}
         {activeMode === "summer" ? <Tree /> : <LTree />}
         {/* <LTree /> */}
-        {/* <Tree /> */}
+        <Tree />
         {/* Ground */}
         <Ground />
+        <MyThree />
         <Sky />
         {/* Lights */}
         <hemisphereLight

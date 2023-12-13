@@ -1,21 +1,27 @@
 
 import * as THREE from 'three';
 import { useEffect, useRef } from 'react';
+import { red } from '@mui/material/colors';
+import { useThree } from '@react-three/fiber';
+import { BloomEffect, EffectComposer, EffectPass, RenderPass } from 'postprocessing';
 
 function MyThree() {
+ const{scene, gl, camera} = useThree();
   const refContainer = useRef(null);
 
   const initializeScene = (container) => {
     // Scene, Camera, Renderer
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
+    // var scene = new THREE.Scene();
+    // var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    // var renderer = new THREE.WebGLRenderer();
+    // renderer.setSize(window.innerWidth, window.innerHeight);
+    // container.appendChild(renderer.domElement);
 
     // Particle System
     var particles = new THREE.BufferGeometry();
-    var particleMaterial = new THREE.PointsMaterial({ color:  0xFFFFFF, size: 0.1 });
+    var particleMaterial = new THREE.PointsMaterial({ color: "rgb(255,255,255)", size: .05, emissive: "rgb(255,255,255)" });
+
+    console.log("hi");
 
     var particlesCount = 25;
     var particlesPositions = new Float32Array(particlesCount * 3);
@@ -26,7 +32,7 @@ function MyThree() {
     const resetParticle = (index) => {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
-      const radius = 1.5;
+      const radius = 3;
       particlesPositions[index * 3] = radius * Math.sin(phi) * Math.cos(theta);
       particlesPositions[index * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       particlesPositions[index * 3 + 2] = radius * Math.cos(phi);
@@ -42,9 +48,17 @@ function MyThree() {
     var particleSystem = new THREE.Points(particles, particleMaterial);
     scene.add(particleSystem);
 
+        // Setup bloom effect
+        const composer = new EffectComposer(gl);
+        const renderPass = new RenderPass(scene, camera);
+        const bloomPass = new EffectPass(camera, new BloomEffect());
+        bloomPass.renderToScreen = true;
+        composer.addPass(renderPass);
+        composer.addPass(bloomPass);
 
-    // Camera Position
-    camera.position.z = 5;
+
+    // // Camera Position
+    // camera.position.z = 5;
 
     // Animation Loop
     var animate = function () {
@@ -66,10 +80,15 @@ function MyThree() {
           particlesPositions[i * 3 + 2] ** 2
         );
 
-        if (particleRadius > 1.5) {
-          particlesPositions[i * 3] /= particleRadius / 1.5;
-          particlesPositions[i * 3 + 1] /= particleRadius / 1.5;
-          particlesPositions[i * 3 + 2] /= particleRadius / 1.5;
+        if (particlesPositions[i * 3 + 1] < 0.2) {
+            // Adjust the y-coordinate to be above 0.2
+            particlesPositions[i * 3 + 1] = 0.21 +particlesVelocities[i].y;;
+          }
+
+        if (particleRadius > 3) {
+          particlesPositions[i * 3] /= particleRadius / 3;
+          particlesPositions[i * 3 + 1] /= particleRadius / 3;
+          particlesPositions[i * 3 + 2] /= particleRadius / 3;
         }
 
         // Check if it's time to reset this particle
@@ -82,19 +101,19 @@ function MyThree() {
       }
 
       particles.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
+      composer.render();
 
-      renderer.render(scene, camera);
     };
     animate();
   };
 
   useEffect(() => {
-    if (refContainer.current) {
+    // if (refContainer.current) {
       initializeScene(refContainer.current);
-    }
+    // }
   }, []);
 
-  return <div ref={refContainer}></div>;
+//   return <div ref={refContainer}></div>;
 }
 
 export default MyThree;
