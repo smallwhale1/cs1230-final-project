@@ -9,8 +9,9 @@ import vert from "./vertex.glsl.js";
 
 interface Props {
   color: string;
+  windSpeed: number;
 }
-export function FoliageMaterial({ color }: Props) {
+export function FoliageMaterial({ color, windSpeed }: Props) {
   const ref = useRef(null);
   const alphaMap = useTexture("/assets/foliage-texture.jpg");
 
@@ -26,10 +27,10 @@ export function FoliageMaterial({ color }: Props) {
       u_effectBlend: { value: 1.0 },
       u_inflate: { value: 0.0 },
       u_scale: { value: 1.0 },
-      u_windSpeed: { value: 1.0 },
+      u_windSpeed: { value: windSpeed },
       u_windTime: { value: 0.0 },
     }),
-    []
+    [windSpeed]
   );
 
   return (
