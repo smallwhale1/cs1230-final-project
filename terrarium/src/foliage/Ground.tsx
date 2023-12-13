@@ -96,7 +96,7 @@ const WaterComponent = (props: Props) => {
     });
     console.log("local ", object.position);
 
-    object.position.y -= 1.8;
+    object.position.y -= 1.0;
 
     var target = new Vector3(0, 0, 0);
     const ret = object.getWorldPosition(target);
@@ -110,7 +110,7 @@ const WaterComponent = (props: Props) => {
     object.geometry && (
       <primitive
         object={water}
-        position={[-0.7399999926239252, 0.005, -0.66368191229517947]}
+        position={[-0.7399999926239252, 0.001, -0.66368191229517947]}
         rotation={[-Math.PI / 2, 0, 0]}
         // rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
         // scale={0.01}
@@ -127,11 +127,45 @@ const SceneAdjustments = (props: Props) => {
   if (object) {
     object.position.y -= 1.7;
   }
-  // if (object && object instanceof Mesh && object.material && object.geometry) {
 
-  // }
-};
+  const pond = scene.getObjectByName("Ellipse_4");
+  if (pond) {
+    pond.position.y -= 1.7;
+  }
 
+  const diffuseMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/textures/rock_diffuse.jpg");
+  const normalMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/textures/rock_normal.jpg");
+  const aoRoughMetalMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/textures/rock_ao.jpg");
+
+
+  const floorMat = new MeshStandardMaterial({
+    map: diffuseMap,
+    normalMap: normalMap,
+    aoMap: aoRoughMetalMap,
+    roughnessMap: aoRoughMetalMap,
+    metalnessMap: aoRoughMetalMap
+ }); 
+ const rock = scene.getObjectByName("big_rocks");
+ console.log("looking for rock, ", rock);
+ if(rock) {
+   const rock1 = rock.children[0]
+   const rock2 = rock.children[1]
+   const rock3 = rock.children[2]
+
+   if (rock1 && rock1 instanceof Mesh) {
+    rock1.material = floorMat
+   }
+   if (rock2 && rock2 instanceof Mesh) {
+    rock2.material = floorMat
+   }
+   if (rock3 && rock3 instanceof Mesh) {
+    rock3.material = floorMat
+   }
+ }
+
+ 
+  
+}
 const Ground = (props: Props) => {
   SceneAdjustments([]);
 

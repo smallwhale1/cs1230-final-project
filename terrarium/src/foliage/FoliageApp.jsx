@@ -94,8 +94,8 @@ const FoliageApp = () => {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-        <ambientLight intensity={1.0} />
-        <pointLight position={[-10, 0, -20]} color="#eef4aa" intensity={0.5} />
+        <ambientLight intensity={0.8} />
+        {/* <pointLight position={[-10, 0, -20]} color="#eef4aa" intensity={0.5} /> */}
         {/* Controls */}
         <PerspectiveCamera
           far={2000}
