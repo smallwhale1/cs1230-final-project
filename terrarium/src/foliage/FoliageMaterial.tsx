@@ -8,7 +8,7 @@ import vert from "./vertex.glsl.js";
 // Tree colors: "#65b231"
 export function FoliageMaterial() {
   const ref = useRef(null);
-  const alphaMap = useTexture("https://douges.dev/static/foliage_alpha3.png");
+  const alphaMap = useTexture("/assets/foliage-texture.jpg");
 
   useFrame((_, delta) => {
     if (!ref.current) return;
@@ -31,9 +31,9 @@ export function FoliageMaterial() {
   return (
     <CustomShaderMaterial
       alphaMap={alphaMap}
-      alphaTest={0.5}
+      alphaTest={0.2}
       baseMaterial={MeshStandardMaterial}
-      color={new Color("#fa6daa").convertLinearToSRGB()}
+      color={new Color("#ff5da1").convertLinearToSRGB()}
       ref={ref}
       uniforms={uniforms}
       vertexShader={vert}
