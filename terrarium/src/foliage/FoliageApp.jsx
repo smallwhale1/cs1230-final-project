@@ -35,17 +35,17 @@ const VanillaWrapper = () => {
 const SceneAudio = () => {
   const { camera } = useThree();
   const listener = new AudioListener();
-  camera.add( listener );
+  camera.add(listener);
 
   // create a global audio source
-  const sound = new Audio( listener );
+  const sound = new Audio(listener);
 
   // load a sound and set it as the Audio object's buffer
   const audioLoader = new AudioLoader();
-  audioLoader.load( '/models/Dear_Katara.ogg', function( buffer ) {
-    sound.setBuffer( buffer );
-    sound.setLoop( true );
-    sound.setVolume( 0.5 );
+  audioLoader.load("/models/Dear_Katara.ogg", function (buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.5);
     sound.play();
   });
 
@@ -81,7 +81,7 @@ const FoliageApp = () => {
         {/* <LTree /> */}
         <Tree />
         <GlassSphere setSceneLoaded={setSceneLoaded} />
-        <Plant />
+        <Plant lSystemState={{ angle: 30 }} />
         <Ground />
         <MyThree />
         {/* <ReactAudioPlayer

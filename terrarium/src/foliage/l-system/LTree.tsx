@@ -1,268 +1,337 @@
-import { Clone, Cylinder, Line, Sphere, useGLTF } from "@react-three/drei";
+import { Clone, Cylinder, Line, useGLTF } from "@react-three/drei";
+import React, { useEffect, useRef, useState } from "react";
+import { MeshBasicMaterial, Vector3 } from "three";
 import { Turtle, TurtleSimple, applyRules } from "./generator";
-import { useEffect, useState } from "react";
-import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { FoliageMaterial } from "../FoliageMaterial";
+import { useThree } from "@react-three/fiber";
 
-type Props = {};
-
-export const TreeGenerator = () => {
-  const { size, scene } = useThree();
-
-  const generateTree = () => {
-    const axiom = "X";
-    const rules = {
-      F: "FX[FX[+XF]]",
-      X: "FF[+XZ++X-F[+ZX]][-X++F-X]",
-      Z: "[+F-X-F][++ZX]",
-    };
-
-    const iterations = 4;
-
-    // Generate the L-system string
-    let currentString = axiom;
-    for (let i = 0; i < iterations; i++) {
-      currentString = applyRules(currentString, rules);
-    }
-
-    drawTree(currentString);
-  };
-
-  const drawTree = (generationString: string) => {
-    // variables
-    const turnAngle = Math.PI / 9;
-    const drawLength = 2;
-
-    // Set up state
-    let turtle: TurtleSimple = {
-      x: 50,
-      y: 200,
-      z: 0,
-      // angles
-      yaw: -Math.PI / 2,
-      pitch: -Math.PI / 2,
-      roll: -Math.PI / 2,
-    };
-
-    const stack: TurtleSimple[] = [];
-
-    for (let i = 0; i < generationString.length; i++) {
-      const current = generationString[i];
-      switch (current) {
-        case "F":
-          // forward
-          const newX = turtle.x + Math.cos(turtle.yaw) * drawLength;
-          const newY = turtle.y + Math.sin(turtle.yaw) * drawLength;
-          // draw
-
-          // update state
-          turtle.x = newX;
-          turtle.y = newY;
-          break;
-        case "+":
-          // Turn right
-          turtle.yaw += turnAngle; // Adjust the angle as needed
-          break;
-        case "-":
-          // Turn left
-          turtle.yaw -= turnAngle; // Adjust the angle as needed
-          break;
-        case "[":
-          // Push current state to stack
-          stack.push({
-            x: turtle.x,
-            y: turtle.y,
-            z: turtle.z,
-            yaw: turtle.yaw,
-            pitch: turtle.pitch,
-            roll: turtle.roll,
-          });
-          break;
-        case "]":
-          // Pop state from stack
-          const state = stack.pop();
-          if (!state) return;
-          turtle.x = state.x;
-          turtle.y = state.y;
-          turtle.yaw = state.yaw;
-          break;
-      }
-    }
-  };
-
-  useEffect(() => {
-    // vanilla test
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00aa00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-  }, []);
-
-  return <></>;
+type Props = {
+  lSystemState: LSystemControls;
 };
 
-const LTree = (props: Props) => {
+export interface LSystemControls {
+  angle: number;
+}
+
+interface ParameterizedSymbol {
+  symbol: string;
+  params: number[];
+}
+
+// const offsetVector: Vector3 = new Vector3(-1.9, 0.2, 0.25);
+const offsetVector: Vector3 = new Vector3(0, 0.2, 0);
+const scaleBack = 0.75;
+
+const degToRad = (deg: number): number => {
+  return deg * (Math.PI / 180.0);
+};
+
+const Plant = ({ lSystemState }: Props) => {
   const [objects, setObjects] = useState<JSX.Element[]>([]);
-  const tree = useGLTF("https://douges.dev/static/tree.glb");
+  const pot = useGLTF("assets/pot.glb");
+  const leafy = useGLTF("assets/leafy.glb");
+  const { scene, camera } = useThree();
+  const currentGeometries = useRef<THREE.Mesh[]>([]);
 
-  const generateTree = () => {
-    const axiom = "X";
-    const rules = {
-      F: "FX[FX[+XF]]",
-      X: "F+F-[+X-Z++X-F[+ZX]][-X+F-X]",
-      Z: "[+F-X-F][++ZX]",
-    };
-
-    const iterations = 3;
-
-    // Generate the L-system string
-    let currentString = axiom;
-    for (let i = 0; i < iterations; i++) {
-      currentString = applyRules(currentString, rules);
+  useEffect(() => {
+    if (currentGeometries.current) {
+      currentGeometries.current.forEach((elem) => {
+        scene.remove(elem);
+      });
     }
+    generatePlant();
+  }, [lSystemState, scene]);
 
-    currentString = currentString
-      .split("")
-      .filter((char) => !["Z", "X"].includes(char))
-      .join("");
-    console.log(currentString);
+  const makeCylinder = (pointX: Vector3, pointY: Vector3, w: number) => {
+    // edge from X to Y
+    var direction = new THREE.Vector3().subVectors(pointY, pointX);
+    const material = new THREE.MeshStandardMaterial({ color: "#5f8034" });
+    // Make the geometry (of "direction" length)
+    var geometry = new THREE.CylinderGeometry(
+      w * scaleBack,
+      w,
+      direction.length(),
+      6,
+      4,
+      false
+    );
+    // shift it so one end rests on the origin
+    geometry.applyMatrix4(
+      new THREE.Matrix4().makeTranslation(0, direction.length() / 2, 0)
+    );
+    // rotate it the right way for lookAt to work
+    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(degToRad(90)));
+    // Make a mesh with the geometry
+    var mesh = new THREE.Mesh(geometry, material);
+    // Position it where we want
+    mesh.position.copy(pointX);
+    // And make it point to where we want
+    mesh.lookAt(pointY);
 
-    drawTree(currentString);
+    mesh.position.x += offsetVector.x;
+    mesh.position.y += offsetVector.y;
+    mesh.position.z += offsetVector.z;
+    currentGeometries.current.push(mesh);
+    scene.add(mesh);
+
+    // return { pos: mesh.position, rot: mesh.rotation, length: direction.length() };
   };
 
-  //   const positionCylinder = () => {
-  //     // Assuming you have a line defined by two Vector3 points: startPoint and endPoint
-  //     const startPoint = new THREE.Vector3(x1, y1, z1);
-  //     const endPoint = new THREE.Vector3(x2, y2, z2);
+  const generateSnowflake = () => {
+    const iterations = 3;
+    const axiom: ParameterizedSymbol[] = [
+      { symbol: "F", params: [1] },
+      { symbol: "-", params: [120] },
+      { symbol: "F", params: [1] },
+      { symbol: "-", params: [120] },
+      { symbol: "F", params: [1] },
+    ];
 
-  //     // Calculate the length and direction of the line
-  //     const length = startPoint.distanceTo(endPoint);
-  //     const direction = new THREE.Vector3()
-  //       .subVectors(endPoint, startPoint)
-  //       .normalize();
+    let currAxiom = axiom;
 
-  //     // Create a cylinder geometry
-  //     const cylinderGeometry = new THREE.CylinderBufferGeometry(
-  //       radius,
-  //       radius,
-  //       length,
-  //       radialSegments
-  //     );
+    for (let j = 0; j < iterations; j++) {
+      let newAxiom: ParameterizedSymbol[] = [];
+      for (let i = 0; i < currAxiom.length; i++) {
+        const current = currAxiom[i];
+        if (current.symbol == "F") {
+          newAxiom.push(
+            { symbol: "F", params: [current.params[0] / 3] },
+            { symbol: "+", params: [60] },
+            { symbol: "F", params: [current.params[0] / 3] },
+            { symbol: "-", params: [120] },
+            { symbol: "F", params: [current.params[0] / 3] },
+            { symbol: "+", params: [60] },
+            { symbol: "F", params: [current.params[0] / 3] }
+          );
+        } else {
+          newAxiom.push(current);
+        }
+      }
 
-  //     // Create a cylinder material
-  //     const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      currAxiom = newAxiom;
+    }
 
-  //     // Create a cylinder mesh
-  //     const cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+    drawSystem(currAxiom);
+  };
 
-  //     // Position the cylinder at the midpoint of the line
-  //     cylinderMesh.position.copy(
-  //       startPoint.clone().add(endPoint).multiplyScalar(0.5)
-  //     );
+  const generatePlant = () => {
+    // initialize params
+    const iterations = 10;
+    const r1 = 0.55;
+    const r2 = 0.95;
+    const a1 = -5;
+    const a2 = lSystemState.angle;
+    const y1 = 137;
+    const y2 = 137;
+    const w0 = 20;
+    const q = 0.45;
+    const e = 0.5;
+    const min = 0.5;
 
-  //     // Orient the cylinder along the line using the lookAt method
-  //     cylinderMesh.lookAt(endPoint);
+    // initialize params
+    // const iterations = 10;
+    // const r1 = 0.75;
+    // const r2 = 0.77;
+    // const a1 = 20;
+    // const a2 = -20;
+    // const y1 = 0;
+    // const y2 = 0;
+    // const w0 = 30;
+    // const q = 0.5;
+    // const e = 0.4;
+    // const min = 0.0;
 
-  //     // Add the cylinder to the scene
-  //     scene.add(cylinderMesh);
-  //   };
+    // const iterations = 9;
+    // const r1 = 0.5;
+    // const r2 = 0.85;
+    // const a1 = 25;
+    // const a2 = -15;
+    // const y1 = 180;
+    // const y2 = 0;
+    // const w0 = 20;
+    // const q = 0.45;
+    // const e = 0.5;
+    // const min = 0.5;
 
-  const drawTree = (generationString: string) => {
-    // variables
-    const turnAngleX = -Math.PI / 10;
-    const turnAngleZ = Math.PI / 10;
-    const drawLengthX = 0.3;
-    const drawLengthZ = 0.1;
-    const shortDrawLengthX = 0.001;
-    const shortDrawLengthZ = 0.001;
+    const axiom: ParameterizedSymbol[] = [{ symbol: "A", params: [100, w0] }];
+
+    // Generate the L-system string
+    let currAxiom = axiom;
+    for (let j = 0; j < iterations; j++) {
+      let newAxiom: ParameterizedSymbol[] = [];
+      for (let i = 0; i < currAxiom.length; i++) {
+        const current = currAxiom[i];
+        if (current.symbol == "A" && current.params[0] >= min) {
+          newAxiom.push(
+            { symbol: "!", params: [current.params[1]] },
+            { symbol: "F", params: [current.params[0]] },
+            { symbol: "[", params: [] },
+            {
+              symbol: "+",
+              params: [a1],
+            },
+            {
+              symbol: "/",
+              params: [y1],
+            },
+            {
+              symbol: "A",
+              params: [current.params[0] * r1, current.params[1] * q ** e],
+            },
+            { symbol: "]", params: [] },
+            { symbol: "[", params: [] },
+            {
+              symbol: "+",
+              params: [a2],
+            },
+            {
+              symbol: "/",
+              params: [y2],
+            },
+            {
+              symbol: "A",
+              params: [
+                current.params[0] * r2,
+                current.params[1] * (1 - q) ** e,
+              ],
+            },
+            { symbol: "]", params: [] }
+          );
+        } else {
+          newAxiom.push(current);
+        }
+      }
+      currAxiom = newAxiom;
+    }
+
+    drawSystem(currAxiom);
+  };
+
+  const drawSystem = (symbols: ParameterizedSymbol[]) => {
+    const stack: Turtle[] = [];
+    const newObjects = [];
+    const scale = 0.0015;
 
     // Set up state
-    let turtle: TurtleSimple = {
+    let turtle: Turtle = {
       x: 0,
       y: 0,
       z: 0,
-      // angles
-      yaw: Math.PI / 2 + 0.2,
-      pitch: -Math.PI / 2,
+      width: 0.01,
+      front: new Vector3(0, 1, 0),
+      out: new Vector3(0, 0, 1),
+      // angle
+      yaw: 0,
+      pitch: 0,
       roll: 0,
     };
+    for (let i = 0; i < symbols.length; i++) {
+      const current = symbols[i];
 
-    const stack: TurtleSimple[] = [];
-    const newObjects = [];
-
-    // if the location is not saved, it is the last branch there
-
-    for (let i = 0; i < generationString.length; i++) {
-      const current = generationString[i];
-      let newX = 0;
-      let newY = 0;
-      let newZ = 0;
-      switch (current) {
+      switch (current.symbol) {
         case "F":
-          newX = turtle.x + Math.cos(turtle.yaw) * drawLengthX;
-          newY = turtle.y + Math.sin(turtle.yaw) * drawLengthX;
-          newZ = turtle.z + Math.sin(turtle.roll) * drawLengthZ;
-          //   if (
-          //     i != generationString.length - 1 &&
-          //     generationString[i + 1] != "["
-          //   ) {
-          //     // forward
-          //     newX = turtle.x + Math.cos(turtle.angleX) * shortDrawLengthX;
-          //     newY = turtle.y + Math.sin(turtle.angleX) * shortDrawLengthX;
-          //     newZ = turtle.z + Math.sin(turtle.angleZ) * shortDrawLengthZ;
-          //   } else {
-          //     // forward
-          //     newX = turtle.x + Math.cos(turtle.angleX) * drawLengthX;
-          //     newY = turtle.y + Math.sin(turtle.angleX) * drawLengthX;
-          //     newZ = turtle.z + Math.sin(turtle.angleZ) * drawLengthZ;
-          //   }
+          const initPoint = new THREE.Vector3(turtle.x, turtle.y, turtle.z);
+          const finalPoint = new THREE.Vector3();
+          finalPoint.copy(initPoint);
+          finalPoint.addScaledVector(turtle.front, current.params[0] * scale);
 
-          // draw
-          newObjects.push(
-            // <Cylinder args={[1, 1]} position={} rotation={}/>
-            <Line
-              points={[
-                [turtle.x, turtle.y, turtle.z],
-                [newX, newY, newZ],
-              ]} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
-              color="#733b3b" // Default
-              lineWidth={2} // In pixels (default)
-              segments // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
-              dashed={false} // Default
-            />
+          makeCylinder(initPoint, finalPoint, turtle.width);
+          turtle.width = turtle.width * scaleBack;
+
+          const elements = [0, 1, 2, 3];
+          const randomElement =
+            elements[Math.floor(Math.random() * elements.length)];
+          const dist = new Vector3(0, 0, 0).distanceTo(finalPoint);
+
+          if (dist >= 0.5) {
+            console.log("more");
+            if (dist >= 1 || Math.random() < 0.5) {
+              newObjects.push(
+                <Clone
+                  scale={0.2}
+                  rotation={[0, randomElement * ((2 * Math.PI) / 4), 0]}
+                  position={
+                    new Vector3(
+                      finalPoint.x + offsetVector.x,
+                      finalPoint.y + offsetVector.y,
+                      finalPoint.z + offsetVector.z
+                    )
+                  }
+                  object={leafy.scene}
+                />
+              );
+            }
+          }
+
+          //   newObjects.push(
+          //     <Line
+          //       points={[initPoint, finalPoint]}
+          //       color="#254620" // Default
+          //       lineWidth={1} // In pixels (default)
+          //     />
+          //   );
+
+          // newObjects.push(
+          //   <Cylinder
+          //     args={[0.002, 0.002, cylData.length, 6, 4, false]}
+          //     position={cylData.pos}
+          //     rotation={cylData.rot}
+          //   />
+          // );
+
+          // update state
+          turtle.x = finalPoint.x;
+          turtle.y = finalPoint.y;
+          turtle.z = finalPoint.z;
+          break;
+        case "+": {
+          // Turn right
+          const newFront = new Vector3(
+            turtle.front.x,
+            turtle.front.y,
+            turtle.front.z
           );
 
-          //   if (
-          //     i != generationString.length - 1 &&
-          //     generationString[i + 1] != "["
-          //   ) {
-          //     newObjects.push(
-          //       // <Cylinder args={[1, 1]} position={} rotation={}/>
-          //       <Sphere position={[newX, newY, newZ]} args={[0.01]} />
-          //     );
-          //   }
-          // update state
-          turtle.x = newX;
-          turtle.y = newY;
-          turtle.z = newZ;
+          newFront.applyAxisAngle(turtle.out, degToRad(current.params[0]));
+
+          const newOut = new Vector3(turtle.out.x, turtle.out.y, turtle.out.z);
+
+          newOut.applyAxisAngle(turtle.out, degToRad(current.params[0]));
+
+          turtle.front = newFront;
+          turtle.out = newOut;
           break;
-        case "+":
-          // Turn right
-          turtle.yaw += turnAngleX; // Adjust the angle as needed
-          turtle.roll += turnAngleZ;
-          break;
+        }
         case "-":
           // Turn left
-          turtle.yaw -= turnAngleX; // Adjust the angle as needed
-          turtle.roll -= turnAngleZ;
+          turtle.yaw -= degToRad(current.params[0]);
           break;
+        case "/": {
+          const newFront = new Vector3(
+            turtle.front.x,
+            turtle.front.y,
+            turtle.front.z
+          );
+
+          newFront.applyAxisAngle(turtle.front, degToRad(current.params[0]));
+          const newOut = new Vector3(turtle.out.x, turtle.out.y, turtle.out.z);
+
+          newOut.applyAxisAngle(turtle.front, degToRad(current.params[0]));
+
+          turtle.front = newFront;
+          turtle.out = newOut;
+          //   turtle.pitch += degToRad(current.params[0]);
+          break;
+        }
         case "[":
           // Push current state to stack
           stack.push({
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
+            width: turtle.width,
+            front: turtle.front,
+            out: turtle.out,
             yaw: turtle.yaw,
             pitch: turtle.pitch,
             roll: turtle.roll,
@@ -275,7 +344,14 @@ const LTree = (props: Props) => {
           turtle.x = state.x;
           turtle.y = state.y;
           turtle.z = state.z;
+          turtle.front = state.front;
+          turtle.width = state.width;
+          turtle.out = state.out;
           turtle.yaw = state.yaw;
+          turtle.pitch = state.pitch;
+          turtle.roll = state.roll;
+          break;
+        default:
           break;
       }
     }
@@ -283,44 +359,20 @@ const LTree = (props: Props) => {
     setObjects(newObjects);
   };
 
-  useEffect(() => {
-    generateTree();
-    // wait until flower loads potentially
-  }, []);
   return (
-    <group position={[1, 0, -1]}>
+    <group>
+      <mesh
+        scale={0.4}
+        position={[offsetVector.x, offsetVector.y - 0.6, offsetVector.z]}
+      >
+        <primitive object={pot.nodes.pCylinder1} />
+      </mesh>
       {objects}
-      {/* <Clone
-        scale={1.5}
-        position={[-1.5, 3.6, 0]}
-        receiveShadow
-        castShadow
-        object={tree.nodes.foliage}
-        inject={<FoliageMaterial />}
-      /> */}
-      {/* <TreeGenerator /> */}
-      {/* <Line
-        points={[
-          [0, 0, 0],
-          [0, 1, 0],
-        ]} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
-        color="black" // Default
-        lineWidth={2} // In pixels (default)
-        segments // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
-        dashed={false} // Default
-      /> */}
-      {/* <Cylinder
-        args={[0.3, 0.2]}
-        position={[0, 1, 0]}
-        material-color={"#000000"}
-      />
-      <Cylinder
-        args={[0.2, 0.3]}
-        position={[0, 2, 0]}
-        material-color={"#000000"}
-      /> */}
+      {/* <mesh rotation={[0, 0 * ((2 * Math.PI) / 4), 0]}>
+        <primitive object={leafy.scene} />
+      </mesh> */}
     </group>
   );
 };
 
-export default LTree;
+export default Plant;
