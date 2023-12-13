@@ -52,96 +52,97 @@ const Plant = (props: Props) => {
   };
 
   const generatePlant = () => {
-    const iterations = 4;
     // initialize params
-    const min = 0;
-    const r1 = 0;
-    const w = 0;
-    const q = 0;
-    const e = 0;
-    const a1 = 0;
-    const yaw1 = 0;
+    // const iterations = 12;
+    // const r1 = 0.55;
+    // const r2 = 0.95;
+    // const a1 = -5;
+    // const a2 = 30;
+    // const y1 = 137;
+    // const y2 = 137;
+    // const w0 = 5;
+    // const q = 0.4;
+    // const e = 0.0;
+    // const min = 0.5;
 
-    const axiom: ParameterizedSymbol[] = [{ symbol: "A", params: [100, 0] }];
-    const rules = {};
+    // initialize params
+    // const iterations = 10;
+    // const r1 = 0.75;
+    // const r2 = 0.77;
+    // const a1 = 20;
+    // const a2 = -20;
+    // const y1 = 0;
+    // const y2 = 0;
+    // const w0 = 30;
+    // const q = 0.5;
+    // const e = 0.4;
+    // const min = 0.0;
+
+    const iterations = 9;
+    const r1 = 0.5;
+    const r2 = 0.85;
+    const a1 = 25;
+    const a2 = -15;
+    const y1 = 180;
+    const y2 = 0;
+    const w0 = 20;
+    const q = 0.45;
+    const e = 0.5;
+    const min = 0.5;
+
+    const axiom: ParameterizedSymbol[] = [{ symbol: "A", params: [100, w0] }];
 
     // Generate the L-system string
     let currAxiom = axiom;
-    let seenA = true;
-    while (seenA) {
+    for (let j = 0; j < iterations; j++) {
       let newAxiom: ParameterizedSymbol[] = [];
-      let count = 0;
       for (let i = 0; i < currAxiom.length; i++) {
         const current = currAxiom[i];
-        if (current.symbol == "A") {
-          if (current.params[0] >= min) {
-            count += 1;
-            newAxiom = [
-              ...newAxiom,
-              // ignore !(w) for now
-              { symbol: "F", params: [current.params[0]] },
-              { symbol: "[", params: [] },
-              {
-                symbol: "+",
-                params: [a1],
-              },
-              {
-                symbol: "/",
-                params: [yaw1],
-              },
-              {
-                symbol: "A",
-                params: [current.params[0] * r1, w * q ** e],
-              },
-              { symbol: "]", params: [] },
-              { symbol: "[", params: [] },
-              {
-                symbol: "+",
-                params: [a1],
-              },
-              {
-                symbol: "/",
-                params: [yaw1],
-              },
-              {
-                symbol: "A",
-                params: [current.params[0] * r1, w * (1 - q) ** e],
-              },
-              { symbol: "[", params: [] },
-            ];
-          }
+        if (current.symbol == "A" && current.params[0] >= min) {
+          newAxiom.push(
+            { symbol: "!", params: [current.params[1]] },
+            { symbol: "F", params: [current.params[0]] },
+            { symbol: "[", params: [] },
+            {
+              symbol: "+",
+              params: [a1],
+            },
+            {
+              symbol: "/",
+              params: [y1],
+            },
+            {
+              symbol: "A",
+              params: [current.params[0] * r1, current.params[1] * q ** e],
+            },
+            { symbol: "]", params: [] },
+            { symbol: "[", params: [] },
+            {
+              symbol: "+",
+              params: [a2],
+            },
+            {
+              symbol: "/",
+              params: [y2],
+            },
+            {
+              symbol: "A",
+              params: [
+                current.params[0] * r2,
+                current.params[1] * (1 - q) ** e,
+              ],
+            },
+            { symbol: "]", params: [] }
+          );
         } else {
           newAxiom.push(current);
         }
       }
-      if (count == 0) {
-        seenA = false;
-      }
       currAxiom = newAxiom;
     }
-  };
 
-  const generateTree = () => {
-    const axiom = "X";
-    const rules = {
-      F: "FX[FX[+XF]]",
-      X: "FF[+XZ++X-F[+ZX]][-X++F-X]",
-      Z: "[+F-X-F][++ZX]",
-    };
-
-    const iterations = 4;
-
-    // Generate the L-system string
-    let currentString = axiom;
-    for (let i = 0; i < iterations; i++) {
-      currentString = applyRules(currentString, rules);
-    }
-
-    currentString = currentString
-      .split("")
-      .filter((char) => !["Z", "X"].includes(char))
-      .join("");
-    drawTree(currentString);
+    console.log(currAxiom);
+    drawSystem(currAxiom);
   };
 
   const degToRad = (deg: number): number => {
@@ -151,9 +152,6 @@ const Plant = (props: Props) => {
   const drawSystem = (symbols: ParameterizedSymbol[]) => {
     const stack: Turtle[] = [];
     const newObjects = [];
-    // variables
-    const turnAngleX = -Math.PI / 10;
-    const drawLengthX = 0.3;
 
     // Set up state
     let turtle: Turtle = {
@@ -204,6 +202,9 @@ const Plant = (props: Props) => {
         case "-":
           // Turn left
           turtle.yaw -= degToRad(current.params[0]);
+          break;
+        case "/":
+          turtle.pitch += degToRad(current.params[0]);
           break;
         case "[":
           // Push current state to stack
@@ -339,7 +340,8 @@ const Plant = (props: Props) => {
   };
 
   useEffect(() => {
-    generateSnowflake();
+    generatePlant();
+    // generateSnowflake();
     // generateTree();
   }, []);
   return <group>{objects}</group>;
