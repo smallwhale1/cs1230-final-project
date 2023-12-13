@@ -2,10 +2,12 @@ import { Clone, useGLTF } from "@react-three/drei";
 import { FoliageMaterial } from "./FoliageMaterial";
 import { Euler, MeshStandardMaterial, Vector3, TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function Tree({ position, rotation }) {
+  const [windSpeed, setWindSpeed] = useState(1.0);
   const tree = useGLTF("https://douges.dev/static/tree.glb");
+  const tree2 = useGLTF("/assets/working-tree.glb");
 
   const barkTexture = useLoader(TextureLoader, "/textures/bark_texture.png");
   const normalMap = useLoader(TextureLoader, "/textures/bark_normal.png");
@@ -15,7 +17,9 @@ export function Tree({ position, rotation }) {
     "/textures/bark_displacement.png"
   );
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log("nodes", tree2.nodes);
+  }, []);
 
   // const trunkMat = MeshStandardMaterial(
   // map={barkTexture},
@@ -31,16 +35,16 @@ export function Tree({ position, rotation }) {
       name="tree"
       rotation={rotation}
       position={position}
-      onPointerDown={() => {
-        console.log("click!!");
-      }}
+      // onPointerDown={handleShake}
       scale={1}
     >
       <Clone
+        position={[-0.1, 0, 0.1]}
+        rotation={[0, Math.PI / 1.8, 0]}
         scale={0.9}
         receiveShadow
         castShadow
-        object={tree.nodes.trunk}
+        object={tree2.nodes.Cube}
         inject={
           <meshStandardMaterial
             color={"#473105"}
@@ -61,7 +65,7 @@ export function Tree({ position, rotation }) {
           receiveShadow
           castShadow
           object={tree.nodes.foliage}
-          inject={<FoliageMaterial color={"#db4e89"} />}
+          inject={<FoliageMaterial color={"#db4e89"} windSpeed={windSpeed} />}
         />
         <Clone
           position={[-1.5, 2, 0.2]}
@@ -69,7 +73,7 @@ export function Tree({ position, rotation }) {
           receiveShadow
           castShadow
           object={tree.nodes.foliage}
-          inject={<FoliageMaterial color={"#f25395"} />}
+          inject={<FoliageMaterial color={"#f25395"} windSpeed={windSpeed} />}
         />
         <Clone
           position={[-0.7, 3.5, 0]}
@@ -77,7 +81,7 @@ export function Tree({ position, rotation }) {
           receiveShadow
           castShadow
           object={tree.nodes.foliage}
-          inject={<FoliageMaterial color={"#ff5da1"} />}
+          inject={<FoliageMaterial color={"#ff5da1"} windSpeed={windSpeed} />}
         />
         <Clone
           position={[-0.2, 3.5, 0]}
@@ -85,7 +89,7 @@ export function Tree({ position, rotation }) {
           receiveShadow
           castShadow
           object={tree.nodes.foliage}
-          inject={<FoliageMaterial color={"#fe5ea1"} />}
+          inject={<FoliageMaterial color={"#fe5ea1"} windSpeed={windSpeed} />}
         />
         <Clone
           position={[0.5, 2.2, 0]}
@@ -93,7 +97,7 @@ export function Tree({ position, rotation }) {
           receiveShadow
           castShadow
           object={tree.nodes.foliage}
-          inject={<FoliageMaterial color={"#ff5da1"} />}
+          inject={<FoliageMaterial color={"#ff5da1"} windSpeed={windSpeed} />}
         />
       </group>
     </group>

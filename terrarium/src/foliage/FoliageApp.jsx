@@ -17,6 +17,8 @@ import GlassSphere from "./GlassSphere";
 import ReactAudioPlayer from "react-audio-player";
 import { AudioListener, Audio, AudioLoader } from "three";
 import Plant from "./l-system/Plant";
+import styles from "../App.css";
+import MyThree from "../particles/particleapp";
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -52,8 +54,21 @@ const SceneAudio = () => {
 
 const FoliageApp = () => {
   const [activeMode, setActiveMode] = useState("summer");
+  const [cameraPosition, setCameraPosition] = useState(
+    new THREE.Vector3(0, 4, 12)
+  );
+  const [sceneloaded, setSceneLoaded] = useState(false);
+
   return (
-    <div style={{ width: "100%", height: "100vh", position: "relative" }}>
+    <div
+      className="container"
+      style={{
+        opacity: sceneloaded ? 1 : 0,
+        width: "100%",
+        height: "100vh",
+        position: "relative",
+      }}
+    >
       <Canvas
         style={{
           width: "100%",
@@ -65,9 +80,10 @@ const FoliageApp = () => {
         {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
         {/* <LTree /> */}
         <Tree />
-        <GlassSphere />
+        <GlassSphere setSceneLoaded={setSceneLoaded} />
         <Plant />
         <Ground />
+        <MyThree />
         {/* <ReactAudioPlayer
           src="/models/dear_katara.ogg"
           autoPlay
@@ -102,9 +118,13 @@ const FoliageApp = () => {
           fov={80}
           makeDefault
           near={0.1}
-          position={[0, 4, 10]}
+          position={cameraPosition}
         />
-        <OrbitControls />
+        <OrbitControls
+          onChange={(e) => {
+            setCameraPosition(e.target.object.position);
+          }}
+        />
       </Canvas>
       <div
         style={{

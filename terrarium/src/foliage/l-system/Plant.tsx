@@ -56,7 +56,7 @@ const cylinderMesh = (pointX: Vector3, pointY: Vector3) => {
 const Plant = (props: Props) => {
   const [objects, setObjects] = useState<JSX.Element[]>([]);
   const pot = useGLTF("assets/pot.glb");
-  const { scene } = useThree();
+  const { scene, camera } = useThree();
   const leaf = useGLTF("assets/leaf.glb");
 
   useEffect(() => {
