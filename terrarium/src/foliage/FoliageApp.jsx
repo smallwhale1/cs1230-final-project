@@ -64,8 +64,8 @@ const FoliageApp = () => {
         {/* <VanillaWrapper /> */}
         {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
         {/* <LTree /> */}
-        {/* <Tree />
-        <GlassSphere /> */}
+        <Tree />
+        <GlassSphere />
         <Plant />
         <Ground />
         {/* <ReactAudioPlayer

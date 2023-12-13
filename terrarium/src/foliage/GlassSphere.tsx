@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 const GlassSphere = () => {
-  const { size, scene } = useThree();
+  const { scene } = useThree();
 
   useEffect(() => {
     const geometry = new THREE.IcosahedronGeometry(1, 15);

@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 export function Tree({ position, rotation }) {
   const tree = useGLTF("https://douges.dev/static/tree.glb");
-  const tree2 = useGLTF("assets/untitled.glb");
 
   const barkTexture = useLoader(TextureLoader, "/textures/bark_texture.png");
   const normalMap = useLoader(TextureLoader, "/textures/bark_normal.png");
@@ -16,10 +15,7 @@ export function Tree({ position, rotation }) {
     "/textures/bark_displacement.png"
   );
 
-  useEffect(() => {
-    console.log("tree");
-    console.log(tree2.nodes);
-  }, []);
+  useEffect(() => {}, []);
 
   // const trunkMat = MeshStandardMaterial(
   // map={barkTexture},
@@ -35,7 +31,9 @@ export function Tree({ position, rotation }) {
       name="tree"
       rotation={rotation}
       position={position}
-      onClick={() => {}}
+      onPointerDown={() => {
+        console.log("click!!");
+      }}
       scale={1}
     >
       <Clone
