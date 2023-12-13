@@ -18,6 +18,7 @@ import ReactAudioPlayer from "react-audio-player";
 import { AudioListener, Audio, AudioLoader } from "three";
 import Plant from "./l-system/Plant";
 import styles from "../App.css";
+import MyThree from "../particles/particleapp";
 
 const VanillaWrapper = () => {
   const { size, scene } = useThree();
@@ -82,6 +83,7 @@ const FoliageApp = () => {
         <GlassSphere setSceneLoaded={setSceneLoaded} />
         <Plant />
         <Ground />
+        <MyThree />
         {/* <ReactAudioPlayer
           src="/models/dear_katara.ogg"
           autoPlay
