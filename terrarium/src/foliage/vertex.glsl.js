@@ -27,11 +27,11 @@ mat4 rotateZ(float radians) {
 
 vec4 applyWind(vec4 v) {
   float boundedYNormal = remap(normal.y, -1.0, 1.0, 0.0, 1.0);
-  float posXZ = position.x + position.z;
-  float windPower = u_windSpeed / 5.0 * -0.5;
+  float posXZ = position.y + position.x;
+  float windPower = u_windSpeed / 5.0 * -0.3;
 
+  float bottomFacing = remap(cos(u_windTime + posXZ), -1.0, 1.0, 0.0, 0.02);
   float topFacing = remap(sin(u_windTime + posXZ), -1.0, 1.0, 0.0, windPower);
-  float bottomFacing = remap(cos(u_windTime + posXZ), -1.0, 1.0, 0.0, 0.05);
   float radians = mix(bottomFacing, topFacing, boundedYNormal);
 
   return rotateZ(radians) * v;

@@ -1,5 +1,5 @@
 import { Clone, Cylinder, Line, Sphere, useGLTF } from "@react-three/drei";
-import { Turtle, applyRules } from "./generator";
+import { Turtle, TurtleSimple, applyRules } from "./generator";
 import { useEffect, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
@@ -35,7 +35,7 @@ export const TreeGenerator = () => {
     const drawLength = 2;
 
     // Set up state
-    let turtle: Turtle = {
+    let turtle: TurtleSimple = {
       x: 50,
       y: 200,
       z: 0,
@@ -45,7 +45,7 @@ export const TreeGenerator = () => {
       roll: -Math.PI / 2,
     };
 
-    const stack: Turtle[] = [];
+    const stack: TurtleSimple[] = [];
 
     for (let i = 0; i < generationString.length; i++) {
       const current = generationString[i];
@@ -178,7 +178,7 @@ const LTree = (props: Props) => {
     const shortDrawLengthZ = 0.001;
 
     // Set up state
-    let turtle: Turtle = {
+    let turtle: TurtleSimple = {
       x: 0,
       y: 0,
       z: 0,
@@ -188,7 +188,7 @@ const LTree = (props: Props) => {
       roll: 0,
     };
 
-    const stack: Turtle[] = [];
+    const stack: TurtleSimple[] = [];
     const newObjects = [];
 
     // if the location is not saved, it is the last branch there

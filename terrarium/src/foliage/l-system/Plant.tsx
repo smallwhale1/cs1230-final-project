@@ -1,7 +1,7 @@
 import { Cylinder, Line, useGLTF } from "@react-three/drei";
 import React, { useEffect, useState } from "react";
 import { MeshBasicMaterial, Vector3 } from "three";
-import { Turtle, applyRules } from "./generator";
+import { Turtle, TurtleSimple, applyRules } from "./generator";
 import * as THREE from "three";
 
 type Props = {};
@@ -53,17 +53,17 @@ const Plant = (props: Props) => {
 
   const generatePlant = () => {
     // initialize params
-    // const iterations = 12;
-    // const r1 = 0.55;
-    // const r2 = 0.95;
-    // const a1 = -5;
-    // const a2 = 30;
-    // const y1 = 137;
-    // const y2 = 137;
-    // const w0 = 5;
-    // const q = 0.4;
-    // const e = 0.0;
-    // const min = 0.5;
+    const iterations = 12;
+    const r1 = 0.55;
+    const r2 = 0.95;
+    const a1 = -5;
+    const a2 = 30;
+    const y1 = 137;
+    const y2 = 137;
+    const w0 = 5;
+    const q = 0.4;
+    const e = 0.0;
+    const min = 0.5;
 
     // initialize params
     // const iterations = 10;
@@ -78,17 +78,17 @@ const Plant = (props: Props) => {
     // const e = 0.4;
     // const min = 0.0;
 
-    const iterations = 9;
-    const r1 = 0.5;
-    const r2 = 0.85;
-    const a1 = 25;
-    const a2 = -15;
-    const y1 = 180;
-    const y2 = 0;
-    const w0 = 20;
-    const q = 0.45;
-    const e = 0.5;
-    const min = 0.5;
+    // const iterations = 9;
+    // const r1 = 0.5;
+    // const r2 = 0.85;
+    // const a1 = 25;
+    // const a2 = -15;
+    // const y1 = 180;
+    // const y2 = 0;
+    // const w0 = 20;
+    // const q = 0.45;
+    // const e = 0.5;
+    // const min = 0.5;
 
     const axiom: ParameterizedSymbol[] = [{ symbol: "A", params: [100, w0] }];
 
@@ -158,13 +158,16 @@ const Plant = (props: Props) => {
       x: 0,
       y: 0,
       z: 0,
-      // angles
+      front: new Vector3(0, 1, 0),
+      out: new Vector3(0, 0, 1),
+      // angle
       yaw: 0,
       pitch: 0,
       roll: 0,
     };
     for (let i = 0; i < symbols.length; i++) {
       const current = symbols[i];
+
       switch (current.symbol) {
         case "F":
           //   const a = new THREE.Euler(
@@ -176,14 +179,14 @@ const Plant = (props: Props) => {
           //   const b = new THREE.Vector3(0, 1, 0);
           //   b.applyEuler(a);
           //   b.normalize();
-          const b = new THREE.Vector3(0, 1, 0);
-          b.applyAxisAngle(new THREE.Vector3(0, 0, 1), turtle.yaw);
-          b.normalize();
 
           const initPoint = new THREE.Vector3(turtle.x, turtle.y, turtle.z);
           const finalPoint = new THREE.Vector3();
           finalPoint.copy(initPoint);
-          finalPoint.addScaledVector(b, current.params[0]);
+          finalPoint.addScaledVector(
+            turtle.front.normalize(),
+            current.params[0]
+          );
 
           newObjects.push(
             <Line
@@ -198,23 +201,55 @@ const Plant = (props: Props) => {
           turtle.y = finalPoint.y;
           turtle.z = finalPoint.z;
           break;
-        case "+":
+        case "+": {
           // Turn right
-          turtle.yaw += degToRad(current.params[0]);
+          const newFront = new Vector3(0, 1, 0);
+          newFront.copy(turtle.front);
+
+          newFront.applyAxisAngle(turtle.out, degToRad(current.params[0]));
+          newFront.normalize();
+
+          const newOut = new Vector3(0, 0, 1);
+          newOut.copy(turtle.out);
+
+          newOut.applyAxisAngle(turtle.out, degToRad(current.params[0]));
+          newOut.normalize();
+
+          turtle.front = newFront;
+          turtle.out = newOut;
+          //   turtle.yaw += degToRad(current.params[0]);
           break;
+        }
         case "-":
           // Turn left
           turtle.yaw -= degToRad(current.params[0]);
           break;
-        case "/":
-          turtle.pitch += degToRad(current.params[0]);
+        case "/": {
+          const newFront = new Vector3(0, 1, 0);
+          newFront.copy(turtle.front);
+
+          newFront.applyAxisAngle(turtle.front, degToRad(current.params[0]));
+          newFront.normalize();
+
+          const newOut = new Vector3(0, 0, 1);
+          newOut.copy(turtle.out);
+
+          newOut.applyAxisAngle(turtle.front, degToRad(current.params[0]));
+          newOut.normalize();
+
+          turtle.front = newFront;
+          turtle.out = newOut;
+          //   turtle.pitch += degToRad(current.params[0]);
           break;
+        }
         case "[":
           // Push current state to stack
           stack.push({
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
+            front: turtle.front,
+            out: turtle.out,
             yaw: turtle.yaw,
             pitch: turtle.pitch,
             roll: turtle.roll,
@@ -227,6 +262,8 @@ const Plant = (props: Props) => {
           turtle.x = state.x;
           turtle.y = state.y;
           turtle.z = state.z;
+          turtle.front = state.front;
+          turtle.out = state.out;
           turtle.yaw = state.yaw;
           turtle.pitch = state.pitch;
           turtle.roll = state.roll;
@@ -240,14 +277,14 @@ const Plant = (props: Props) => {
   };
 
   const drawTree = (generationString: string) => {
-    const stack: Turtle[] = [];
+    const stack: TurtleSimple[] = [];
     const newObjects = [];
     // variables
     const turnAngleX = -Math.PI / 10;
     const drawLengthX = 0.3;
 
     // Set up state
-    let turtle: Turtle = {
+    let turtle: TurtleSimple = {
       x: 0,
       y: 0,
       z: 0,

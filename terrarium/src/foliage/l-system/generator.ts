@@ -1,8 +1,21 @@
+import { Vector3 } from "three";
+
+export interface TurtleSimple {
+  x: number;
+  y: number;
+  z: number;
+  yaw: number;
+  pitch: number;
+  roll: number;
+}
+
 // maybe keep track of how many lines drawn so far
 export interface Turtle {
   x: number;
   y: number;
   z: number;
+  front: Vector3;
+  out: Vector3;
   yaw: number;
   pitch: number;
   roll: number;

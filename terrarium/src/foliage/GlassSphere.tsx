@@ -21,7 +21,7 @@ const GlassSphere = () => {
     });
 
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.scale.set(4.8, 4.8, 4.8);
+    mesh.scale.set(5.2, 5.2, 5.2);
     mesh.position.y += 2;
 
     scene.add(mesh);
