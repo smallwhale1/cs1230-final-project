@@ -18,7 +18,7 @@ type Props = {};
 
 const MainScene = () => {
  // thanks to https://polyhaven.com/textures !
- const gltf = useLoader(GLTFLoader, process.env.PUBLIC_URL + "/models/terrarium-coloring.glb");
+ const gltf = useLoader(GLTFLoader, process.env.PUBLIC_URL + "/models/terrarium-flowered.glb");
 
  useEffect(() => {
   if (!gltf) return;
@@ -78,7 +78,7 @@ const WaterComponent = (props: Props) => {
     } );
     console.log('local ', object.position)
 
-    object.position.y -= 1.2;
+    object.position.y -= 1.4;
 
     var target = new Vector3(0,0,0)
     const ret = object.getWorldPosition(target)
@@ -91,7 +91,7 @@ const WaterComponent = (props: Props) => {
 
     <primitive
       object={water}
-      position={[-0.7399999926239252,0.0001,-0.66368191229517947]}
+      position={[-0.7399999926239252,0.001,-0.66368191229517947]}
       rotation={[-Math.PI / 2, 0, 0]}
       // rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
       // scale={0.01}
