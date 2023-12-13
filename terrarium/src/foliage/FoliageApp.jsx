@@ -27,14 +27,14 @@ const VanillaWrapper = () => {
 
 const SceneAudio = () => {
   const { camera } = useThree();
-  const listener = new THREE.AudioListener();
+  const listener = new AudioListener();
   camera.add( listener );
 
   // create a global audio source
-  const sound = new THREE.Audio( listener );
+  const sound = new Audio( listener );
 
   // load a sound and set it as the Audio object's buffer
-  const audioLoader = new THREE.AudioLoader();
+  const audioLoader = new AudioLoader();
   audioLoader.load( '/models/Dear_Katara.ogg', function( buffer ) {
     sound.setBuffer( buffer );
     sound.setLoop( true );
