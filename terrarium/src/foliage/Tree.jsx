@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export function Tree({ position, rotation }) {
   const [windSpeed, setWindSpeed] = useState(1.0);
-  const tree = useGLTF("https://douges.dev/static/tree.glb");
+  const tree = useGLTF("/assets/tree.glb");
   const tree2 = useGLTF("/assets/working-tree.glb");
 
   const barkTexture = useLoader(TextureLoader, "/textures/bark_texture.png");

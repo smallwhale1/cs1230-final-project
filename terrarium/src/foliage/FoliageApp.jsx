@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
-import LTree from "./l-system/LTree";
 import * as THREE from "three";
 import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
 import { FaRegSnowflake } from "react-icons/fa";
@@ -77,7 +76,6 @@ const FoliageApp = () => {
       >
         {/* <VanillaWrapper /> */}
         {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
-        {/* <LTree /> */}
         <Tree />
         <GlassSphere setSceneLoaded={setSceneLoaded} />
         <Plant />

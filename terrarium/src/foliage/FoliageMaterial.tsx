@@ -15,23 +15,19 @@ export function FoliageMaterial({ color, windSpeed }: Props) {
   const ref = useRef(null);
   const alphaMap = useTexture("/assets/foliage-texture.jpg");
 
-  useFrame((_, delta) => {
-    if (!ref.current) return;
-    const refObj = ref.current as any;
-    refObj.uniforms.u_windTime.value +=
-      refObj.uniforms.u_windSpeed.value * delta;
-  });
-
   const uniforms = useMemo(
     () => ({
-      u_effectBlend: { value: 1.0 },
-      u_inflate: { value: 0.0 },
-      u_scale: { value: 1.0 },
-      u_windSpeed: { value: windSpeed },
-      u_windTime: { value: 0.0 },
+      windSpeed: { value: windSpeed },
+      windTime: { value: 0.0 },
     }),
     [windSpeed]
   );
+
+  useFrame((_, dt) => {
+    if (!ref.current) return;
+    const refObj = ref.current as any;
+    refObj.uniforms.windTime.value += refObj.uniforms.windSpeed.value * dt;
+  });
 
   return (
     <CustomShaderMaterial

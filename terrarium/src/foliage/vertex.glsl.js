@@ -1,15 +1,13 @@
-const shader = `uniform float u_effectBlend;
-uniform float u_inflate;
-uniform float u_scale;
-uniform float u_windSpeed;
-uniform float u_windTime;
+const shader = `
+uniform float windSpeed;
+uniform float windTime;
 
-float inverseLerp(float v, float minValue, float maxValue) {
+float invert(float v, float minValue, float maxValue) {
   return (v - minValue) / (maxValue - minValue);
 }
 
 float remap(float v, float inMin, float inMax, float outMin, float outMax) {
-  float t = inverseLerp(v, inMin, inMax);
+  float t = invert(v, inMin, inMax);
   return mix(outMin, outMax, t);
 }
 
@@ -28,10 +26,10 @@ mat4 rotateZ(float radians) {
 vec4 applyWind(vec4 v) {
   float boundedYNormal = remap(normal.y, -1.0, 1.0, 0.0, 1.0);
   float posXZ = position.y + position.x;
-  float windPower = u_windSpeed / 5.0 * -0.3;
+  float pow = windSpeed / 5.0 * -0.3;
 
-  float bottomFacing = remap(cos(u_windTime + posXZ), -1.0, 1.0, 0.0, 0.02);
-  float topFacing = remap(sin(u_windTime + posXZ), -1.0, 1.0, 0.0, windPower);
+  float bottomFacing = remap(cos(windTime + posXZ), -1.0, 1.0, 0.0, 0.02);
+  float topFacing = remap(sin(windTime + posXZ), -1.0, 1.0, 0.0, pow);
   float radians = mix(bottomFacing, topFacing, boundedYNormal);
 
   return rotateZ(radians) * v;
@@ -51,7 +49,7 @@ vec2 calculateInitialOffsetFromUVs() {
 }
 
 vec3 inflateOffset(vec3 offset) {
-  return offset + normal.xyz * u_inflate;
+  return offset + normal.xyz * 0.0;
 }
 
 void main() {
@@ -61,7 +59,7 @@ void main() {
   vec4 worldViewPosition = modelViewMatrix * vec4(position, 1.0);
 
   // Apply the effect blend
-  worldViewPosition += vec4(mix(vec3(0.5), inflatedVertexOffset, u_effectBlend), 0.0);
+  worldViewPosition += vec4(mix(vec3(0.5), inflatedVertexOffset, 1.0), 0.0);
 
   // Apply wind effect
   worldViewPosition = applyWind(worldViewPosition);
