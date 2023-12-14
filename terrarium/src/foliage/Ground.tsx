@@ -1,27 +1,9 @@
-import React, { useRef } from "react";
-import Stats from 'stats.js';
-import {
-  Box3,
-  BufferGeometry,
-  CircleGeometry,
-  Clock,
-  EllipseCurve,
-  MathUtils,
-  PlaneGeometry,
-  ShaderMaterial,
-  TextureLoader,
-  Vector2,
-  Vector3,
-} from "three";
+import { useRef } from "react";
+import Stats from "stats.js";
+import { CircleGeometry, TextureLoader, Vector2, Vector3 } from "three";
 import { extend, useLoader, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
-import {
-  BufferAttribute,
-  Color,
-  Mesh,
-  MeshStandardMaterial,
-  Object3D,
-} from "three";
+import { Mesh, MeshStandardMaterial } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useGLTF } from "@react-three/drei";
 // import { Water } from 'Water2.js'
@@ -42,18 +24,14 @@ const MainScene = () => {
 
   useEffect(() => {
     if (!gltf) return;
-    console.log(gltf.scenes)
 
     gltf.scene.traverse((object) => {
-
       if (object.isObject3D) {
         const mesh = object as Mesh;
-        if(mesh.name === 'wings') {
+        if (mesh.name === "wings") {
           mesh.visible = false;
         }
-
       } else if (object) {
-
         console.log("Group found: ", object);
       }
     });
@@ -120,7 +98,6 @@ const WaterComponent = (props: Props) => {
   );
 };
 
-
 const MyComponentWithStats = () => {
   const stats = useRef(new Stats());
 
@@ -142,9 +119,8 @@ const MyComponentWithStats = () => {
   // ...rest of your component
 };
 
-
 const SceneAdjustments = (props: Props) => {
-  MyComponentWithStats()
+  MyComponentWithStats();
   const { scene } = useThree();
   const object = scene.getObjectByName("bench");
   console.log("looking for bench, ", object);
@@ -157,44 +133,49 @@ const SceneAdjustments = (props: Props) => {
     pond.position.y -= 1.7;
   }
 
-  const diffuseMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/textures/rock_diffuse.jpg");
-  const normalMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/textures/rock_normal.jpg");
-  const aoRoughMetalMap = useLoader(TextureLoader, process.env.PUBLIC_URL + "/textures/rock_ao.jpg");
-
+  const diffuseMap = useLoader(
+    TextureLoader,
+    process.env.PUBLIC_URL + "/textures/rock_diffuse.jpg"
+  );
+  const normalMap = useLoader(
+    TextureLoader,
+    process.env.PUBLIC_URL + "/textures/rock_normal.jpg"
+  );
+  const aoRoughMetalMap = useLoader(
+    TextureLoader,
+    process.env.PUBLIC_URL + "/textures/rock_ao.jpg"
+  );
 
   const floorMat = new MeshStandardMaterial({
     map: diffuseMap,
     normalMap: normalMap,
     aoMap: aoRoughMetalMap,
     roughnessMap: aoRoughMetalMap,
-    metalnessMap: aoRoughMetalMap
- }); 
- const rock = scene.getObjectByName("big_rocks");
+    metalnessMap: aoRoughMetalMap,
+  });
+  const rock = scene.getObjectByName("big_rocks");
 
- if(rock) {
-   const rock1 = rock.children[0]
-   const rock2 = rock.children[1]
-   const rock3 = rock.children[2]
+  if (rock) {
+    const rock1 = rock.children[0];
+    const rock2 = rock.children[1];
+    const rock3 = rock.children[2];
 
-   if (rock1 && rock1 instanceof Mesh) {
-    rock1.material = floorMat
-   }
-   if (rock2 && rock2 instanceof Mesh) {
-    rock2.material = floorMat
-   }
-   if (rock3 && rock3 instanceof Mesh) {
-    rock3.material = floorMat
-   }
- }
-
- const wings = scene.getObjectByName("wings");
-  if (wings) {
-    console.log('bf found')
+    if (rock1 && rock1 instanceof Mesh) {
+      rock1.material = floorMat;
+    }
+    if (rock2 && rock2 instanceof Mesh) {
+      rock2.material = floorMat;
+    }
+    if (rock3 && rock3 instanceof Mesh) {
+      rock3.material = floorMat;
+    }
   }
 
-}
-
- 
+  const wings = scene.getObjectByName("wings");
+  if (wings) {
+    console.log("bf found");
+  }
+};
 
 const Ground = (props: Props) => {
   SceneAdjustments([]);

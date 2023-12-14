@@ -1,36 +1,14 @@
-import {
-  Box,
-  OrbitControls,
-  PerspectiveCamera,
-  Plane,
-} from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
-import LTree from "./l-system/LTree";
 import * as THREE from "three";
-import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
-import { FaRegSnowflake } from "react-icons/fa";
 import GlassSphere from "./GlassSphere";
-import ReactAudioPlayer from "react-audio-player";
 import { AudioListener, Audio, AudioLoader } from "three";
 import Plant from "./l-system/Plant";
-import styles from "../App.css";
 import MyThree from "../particles/particleapp";
-
-const VanillaWrapper = () => {
-  const { size, scene } = useThree();
-
-  useEffect(() => {
-    // vanilla test
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-  }, []);
-};
 
 const SceneAudio = () => {
   const { camera } = useThree();
@@ -53,7 +31,6 @@ const SceneAudio = () => {
 };
 
 const FoliageApp = () => {
-  const [activeMode, setActiveMode] = useState("summer");
   const [cameraPosition, setCameraPosition] = useState(
     new THREE.Vector3(0, 4, 12)
   );
@@ -76,19 +53,11 @@ const FoliageApp = () => {
           backgroundColor: "transparent",
         }}
       >
-        {/* <VanillaWrapper /> */}
-        {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
-        {/* <LTree /> */}
         <Tree />
         <GlassSphere setSceneLoaded={setSceneLoaded} />
         <Plant lSystemState={{ angle: 30 }} />
         <Ground />
         <MyThree />
-        {/* <ReactAudioPlayer
-          src="/models/dear_katara.ogg"
-          autoPlay
-          controls
-        /> */}
         {/* <SceneAudio /> */}
         <Sky />
         {/* Lights */}
@@ -111,7 +80,6 @@ const FoliageApp = () => {
           shadow-camera-bottom={-10}
         />
         <ambientLight intensity={0.8} />
-        {/* <pointLight position={[-10, 0, -20]} color="#eef4aa" intensity={0.5} /> */}
         {/* Controls */}
         <PerspectiveCamera
           far={2000}

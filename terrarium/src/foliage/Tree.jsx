@@ -4,9 +4,9 @@ import { Euler, MeshStandardMaterial, Vector3, TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 
-export function Tree({ position, rotation }) {
+export function Tree() {
   const [windSpeed, setWindSpeed] = useState(1.0);
-  const tree = useGLTF("https://douges.dev/static/tree.glb");
+  const tree = useGLTF("/assets/tree.glb");
   const tree2 = useGLTF("/assets/working-tree.glb");
 
   const barkTexture = useLoader(TextureLoader, "/textures/bark_texture.png");
@@ -33,8 +33,6 @@ export function Tree({ position, rotation }) {
   return (
     <group
       name="tree"
-      rotation={rotation}
-      position={position}
       // onPointerDown={handleShake}
       scale={1}
     >
@@ -47,7 +45,7 @@ export function Tree({ position, rotation }) {
         object={tree2.nodes.Cube}
         inject={
           <meshStandardMaterial
-            color={"#473105"}
+            color={"#472405"}
             // map={barkTexture}
             // normalMap={normalMap}
             // roughnessMap={roughnessMap}
