@@ -1,6 +1,6 @@
-import { useThree } from "@react-three/fiber";
-import React, { useEffect } from "react";
 import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
+import { useEffect } from "react";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 interface Props {

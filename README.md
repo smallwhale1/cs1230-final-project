@@ -9,7 +9,19 @@ We hope you enjoy! <3
 
 We used @react-three/drei and @react-three/fiber to create meshes more easily, as well as @splinetool, postprocessing, and three-custom-shader-material.
 
+## Running Locally
+
+`cd terrarium`
+<br>
+
+Then run `npm i`
+<br>
+
+Finally run `npm start` to start a local server.
+<br>
+
 ## Gallery
+
 <img width="877" alt="Screenshot 2023-12-13 at 6 08 10 PM" src="https://github.com/smallwhale1/cs1230-final-project/assets/40836349/2f474afe-a1fd-4004-a92a-4ca603e2d82b">
 <img width="1087" alt="Screenshot 2023-12-13 at 6 26 34 PM" src="https://github.com/smallwhale1/cs1230-final-project/assets/40836349/7cbe3a50-9b0c-442c-bacc-6df8b7a8c13c">
 <img width="1242" alt="Screenshot 2023-12-13 at 11 44 49 PM" src="https://github.com/smallwhale1/cs1230-final-project/assets/90478438/7a7c2eef-5aff-4d9f-8b20-aa9fe0f24472">

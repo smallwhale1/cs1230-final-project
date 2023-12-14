@@ -1,27 +1,17 @@
-
-import * as THREE from 'three';
-import { useEffect, useRef } from 'react';
-import { red } from '@mui/material/colors';
-import { useThree } from '@react-three/fiber';
+import * as THREE from "three";
+import { useEffect, useRef } from "react";
+import { useThree } from "@react-three/fiber";
+import { useLoader } from "@react-three/fiber";
 // import { BloomEffect, EffectComposer, EffectPass, RenderPass } from 'postprocessing';
-import { PerspectiveCamera } from '@react-three/drei';
-import { useGLTF } from "@react-three/drei";
-import { useLoader } from '@react-three/fiber';
-import { BufferAttribute, Color, Mesh, MeshStandardMaterial, Object3D } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
 
 function MyThree() {
+  const { scene, gl, camera } = useThree();
+  const refContainer = useRef(null);
+  const spriteTexture = useLoader(THREE.TextureLoader, "/textures/glow.png");
+  const sprites = useRef([]);
+  const velocities = useRef([]);
 
-
-  const{scene, gl, camera} = useThree();
-   const refContainer = useRef(null);
-   const spriteTexture = useLoader(THREE.TextureLoader, '/textures/glow.png');
-   const sprites = useRef([]);
-   const velocities = useRef([]);
-   
- 
-   const initializeScene = () => {
+  const initializeScene = () => {
     const particlesCount = 10;
     const radius = 3;
     const scale = 0.1;
@@ -29,7 +19,7 @@ function MyThree() {
     for (let i = 0; i < particlesCount; i++) {
       // Create sprite material with the loaded texture
       const spriteMaterial = new THREE.SpriteMaterial({ map: spriteTexture });
-      
+
       // Create a sprite
       const sprite = new THREE.Sprite(spriteMaterial);
 
@@ -42,14 +32,20 @@ function MyThree() {
         radius * Math.cos(phi)
       );
 
-      sprite.scale.set(scale,scale,scale);
+      sprite.scale.set(scale, scale, scale);
 
       // Add the sprite to the scene
       sprites.current.push(sprite);
-      velocities.current.push(new THREE.Vector3((Math.random() - 0.5) * 0.001, (Math.random() - 0.5) * 0.001, (Math.random() - 0.5) * 0.001)); 
+      velocities.current.push(
+        new THREE.Vector3(
+          (Math.random() - 0.5) * 0.001,
+          (Math.random() - 0.5) * 0.001,
+          (Math.random() - 0.5) * 0.001
+        )
+      );
       scene.add(sprite);
     }
-    
+
     var animate = function () {
       requestAnimationFrame(animate);
 
@@ -71,22 +67,24 @@ function MyThree() {
         const distance = sprite.position.length();
         if (distance > radius || sprite.position.y < 0.2) {
           sprite.position.normalize().multiplyScalar(radius * Math.random());
-          velocities.current[index] = new THREE.Vector3((Math.random() - 0.5) * 0.001, Math.abs(Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.001); // Slowed down reset velocities
+          velocities.current[index] = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.001,
+            Math.abs(Math.random() - 0.5) * 0.01,
+            (Math.random() - 0.5) * 0.001
+          ); // Slowed down reset velocities
         }
       });
     };
 
-     //setInitializeCounter(initializeCounter + 1);
-     animate();
-   };
- 
-    useEffect(() => {
-      initializeScene(refContainer.current);
-   }, [scene, gl, camera]);
- 
- 
- //   return <div ref={refContainer}></div>;
-   return null;
- }
- 
- export default MyThree;
+    animate();
+  };
+
+  useEffect(() => {
+    initializeScene(refContainer.current);
+  }, [scene, gl, camera]);
+
+  //   return <div ref={refContainer}></div>;
+  return null;
+}
+
+export default MyThree;

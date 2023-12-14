@@ -1,36 +1,15 @@
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
-import { Canvas, useThree } from "@react-three/fiber";
-import { useState } from "react";
-import Sky from "./Sky";
-import { Tree } from "./Tree";
-import Ground from "./Ground";
 import * as THREE from "three";
-import GlassSphere from "./GlassSphere";
-import { AudioListener, Audio, AudioLoader } from "three";
-import Plant from "./l-system/Plant";
-import MyThree from "../particles/particleapp";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { useState } from "react";
+import { Tree } from "./scene/foliage/Tree";
+import Sky from "./scene/Sky";
+import Ground from "./scene/Island";
+import GlassSphere from "./scene/GlassSphere";
+import Plant from "./l-system/LSystemPlant";
+import MyThree from "./particles/Particles";
 
-const SceneAudio = () => {
-  const { camera } = useThree();
-  const listener = new AudioListener();
-  camera.add(listener);
-
-  // create a global audio source
-  const sound = new Audio(listener);
-
-  // load a sound and set it as the Audio object's buffer
-  const audioLoader = new AudioLoader();
-  audioLoader.load("/models/Dear_Katara.ogg", function (buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setVolume(0.5);
-    sound.play();
-  });
-
-  return null;
-};
-
-const FoliageApp = () => {
+const App = () => {
   const [cameraPosition, setCameraPosition] = useState(
     new THREE.Vector3(0, 4, 12)
   );
@@ -53,12 +32,12 @@ const FoliageApp = () => {
           backgroundColor: "transparent",
         }}
       >
+        {/* Objects */}
         <Tree />
         <GlassSphere setSceneLoaded={setSceneLoaded} />
         <Plant lSystemState={{ angle: 30 }} />
         <Ground />
         <MyThree />
-        {/* <SceneAudio /> */}
         <Sky />
         {/* Lights */}
         <hemisphereLight
@@ -88,11 +67,7 @@ const FoliageApp = () => {
           near={0.1}
           position={cameraPosition}
         />
-        <OrbitControls
-          onChange={(e) => {
-            setCameraPosition(e.target.object.position);
-          }}
-        />
+        <OrbitControls />
       </Canvas>
       <div
         style={{
@@ -107,4 +82,4 @@ const FoliageApp = () => {
   );
 };
 
-export default FoliageApp;
+export default App;

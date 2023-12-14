@@ -12,8 +12,8 @@ interface Props {
   windSpeed: number;
 }
 export function FoliageMaterial({ color, windSpeed }: Props) {
-  const ref = useRef(null);
-  const alphaMap = useTexture("/assets/foliage-texture.jpg");
+  const shaderRef = useRef(null);
+  const alpha = useTexture("/assets/foliage-texture.jpg");
 
   const uniforms = useMemo(
     () => ({
@@ -24,18 +24,18 @@ export function FoliageMaterial({ color, windSpeed }: Props) {
   );
 
   useFrame((_, dt) => {
-    if (!ref.current) return;
-    const refObj = ref.current as any;
+    if (!shaderRef.current) return;
+    const refObj = shaderRef.current as any;
     refObj.uniforms.windTime.value += refObj.uniforms.windSpeed.value * dt;
   });
 
   return (
     <CustomShaderMaterial
-      alphaMap={alphaMap}
+      alphaMap={alpha}
       alphaTest={0.3}
       baseMaterial={MeshStandardMaterial}
       color={new Color(color).convertLinearToSRGB()}
-      ref={ref}
+      ref={shaderRef}
       uniforms={uniforms}
       vertexShader={vert}
       shadowSide={FrontSide}

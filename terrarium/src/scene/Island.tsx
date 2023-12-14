@@ -1,11 +1,11 @@
-import { useRef } from "react";
 import Stats from "stats.js";
+import { useRef } from "react";
 import { CircleGeometry, TextureLoader, Vector2, Vector3 } from "three";
 import { extend, useLoader, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { Mesh, MeshStandardMaterial } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Water } from "./Water2";
+import { Water } from "./water/Water2";
 import { useFrame } from "@react-three/fiber";
 
 extend({ Water });
@@ -112,8 +112,6 @@ const MyComponentWithStats = () => {
     // monitored code goes here
     stats.current.end();
   });
-
-  // ...rest of your component
 };
 
 const SceneAdjustments = (props: Props) => {
@@ -179,16 +177,6 @@ const Ground = (props: Props) => {
 
   return (
     <>
-      {/* <mesh
-        name="ground"
-        rotation={[MathUtils.degToRad(-90), 0, 0]}
-        receiveShadow
-      >
-        <circleGeometry args={[2, 50]} />
-        <meshStandardMaterial
-          color={new Color("#88f95f").convertLinearToSRGB()}
-        />
-      </mesh> */}
       <MainScene />
       <WaterComponent />
     </>

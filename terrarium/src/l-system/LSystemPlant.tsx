@@ -1,8 +1,8 @@
+import * as THREE from "three";
 import { Clone, useGLTF } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { Turtle } from "./generator";
-import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 
 type Props = {
@@ -18,12 +18,13 @@ interface ParameterizedSymbol {
   params: number[];
 }
 
-const offsetVector: Vector3 = new Vector3(-1.9, 0.2, 0.25);
-const scaleBack = 0.75;
-
 const degToRad = (deg: number): number => {
   return deg * (Math.PI / 180.0);
 };
+
+// Constants
+const offsetVector: Vector3 = new Vector3(-1.9, 0.2, 0.25);
+const scaleBack = 0.75;
 
 const Plant = ({ lSystemState }: Props) => {
   const [objects, setObjects] = useState<JSX.Element[]>([]);
