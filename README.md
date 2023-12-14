@@ -3,11 +3,13 @@
 cs1230 fall23 final project!
 For our project we decided to create a peaceful terrarium floating in the sky! The main features we implemented were L-systems, a particle system, billboarding and alpha mapping, and a custom water shader. Throughout our scene you'll find small details like textures applied to rocks, refraction on our glass container, and an environment sphere. There are no bugs that we are aware of.
 
+L-System reference: http://algorithmicbotany.org/papers/sigcourse.2003/2-1-lsystems.pdf
+
 We hope you enjoy! <3
 
 ## Libraries Used
 
-We used @react-three/drei and @react-three/fiber to create meshes more easily, as well as @splinetool, postprocessing, and three-custom-shader-material.
+We used @react-three/drei and @react-three/fiber to create meshes more easily and three-custom-shader-material to more easily inject shaders.
 
 ## Running Locally
 
