@@ -1,47 +1,25 @@
-import {
-  Box,
-  OrbitControls,
-  PerspectiveCamera,
-  Plane,
-} from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
-import LTree from "./l-system/LTree";
 import * as THREE from "three";
-import { MdOutlineWbSunny, MdSunny } from "react-icons/md";
-import { FaRegSnowflake } from "react-icons/fa";
 import GlassSphere from "./GlassSphere";
-import ReactAudioPlayer from "react-audio-player";
 import { AudioListener, Audio, AudioLoader } from "three";
 import Plant from "./l-system/Plant";
-import styles from "../App.css";
 import MyThree from "../particles/particleapp";
-
-const VanillaWrapper = () => {
-  const { size, scene } = useThree();
-
-  useEffect(() => {
-    // vanilla test
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-  }, []);
-};
 
 const SceneAudio = () => {
   const { camera } = useThree();
-  const listener = new THREE.AudioListener();
+  const listener = new AudioListener();
   camera.add(listener);
 
   // create a global audio source
-  const sound = new THREE.Audio(listener);
+  const sound = new Audio(listener);
 
   // load a sound and set it as the Audio object's buffer
-  const audioLoader = new THREE.AudioLoader();
+  const audioLoader = new AudioLoader();
   audioLoader.load("/models/Dear_Katara.ogg", function (buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(true);
@@ -53,7 +31,6 @@ const SceneAudio = () => {
 };
 
 const FoliageApp = () => {
-  const [activeMode, setActiveMode] = useState("summer");
   const [cameraPosition, setCameraPosition] = useState(
     new THREE.Vector3(0, 4, 12)
   );
@@ -76,19 +53,11 @@ const FoliageApp = () => {
           backgroundColor: "transparent",
         }}
       >
-        {/* <VanillaWrapper /> */}
-        {/* {activeMode === "summer" ? <Tree /> : <LTree />} */}
-        {/* <LTree /> */}
         <Tree />
         <GlassSphere setSceneLoaded={setSceneLoaded} />
-        <Plant />
+        <Plant lSystemState={{ angle: 30 }} />
         <Ground />
         <MyThree />
-        {/* <ReactAudioPlayer
-          src="/models/dear_katara.ogg"
-          autoPlay
-          controls
-        /> */}
         {/* <SceneAudio /> */}
         <Sky />
         {/* Lights */}
@@ -110,8 +79,7 @@ const FoliageApp = () => {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-        <ambientLight intensity={1.0} />
-        <pointLight position={[-10, 0, -20]} color="#eef4aa" intensity={0.5} />
+        <ambientLight intensity={0.8} />
         {/* Controls */}
         <PerspectiveCamera
           far={2000}
@@ -134,46 +102,7 @@ const FoliageApp = () => {
           display: "flex",
           gap: "8px",
         }}
-      >
-        <button
-          onClick={() => setActiveMode("summer")}
-          className="icon-btn"
-          style={{
-            cursor: "pointer",
-            width: "32px",
-            height: "32px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "none",
-            outline: "none",
-            borderRadius: "4px",
-            backgroundColor: activeMode === "summer" ? "#ec4899" : "#f1f5f9",
-            color: activeMode === "summer" ? "#ffffff" : "#94a3b8",
-          }}
-        >
-          <MdSunny />
-        </button>
-        <button
-          onClick={() => setActiveMode("winter")}
-          className="icon-btn"
-          style={{
-            cursor: "pointer",
-            width: "32px",
-            height: "32px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "none",
-            outline: "none",
-            borderRadius: "4px",
-            backgroundColor: activeMode === "winter" ? "#ec4899" : "#f1f5f9",
-            color: activeMode === "winter" ? "#ffffff" : "#94a3b8",
-          }}
-        >
-          <FaRegSnowflake />
-        </button>
-      </div>
+      ></div>
     </div>
   );
 };

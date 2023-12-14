@@ -1,80 +1,77 @@
-import { Cylinder, Line, useGLTF } from "@react-three/drei";
-import React, { useEffect, useState } from "react";
-import { MeshBasicMaterial, Vector3 } from "three";
-import { Turtle, TurtleSimple, applyRules } from "./generator";
+import { Clone, useGLTF } from "@react-three/drei";
+import { useEffect, useRef, useState } from "react";
+import { Vector3 } from "three";
+import { Turtle } from "./generator";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 
-type Props = {};
+type Props = {
+  lSystemState: LSystemControls;
+};
+
+export interface LSystemControls {
+  angle: number;
+}
 
 interface ParameterizedSymbol {
   symbol: string;
   params: number[];
 }
 
-const xOffset = -1.9;
-const yOffset = 0.2;
-const zOffset = 0.25;
+const offsetVector: Vector3 = new Vector3(-1.9, 0.2, 0.25);
+const scaleBack = 0.75;
 
 const degToRad = (deg: number): number => {
   return deg * (Math.PI / 180.0);
 };
 
-const cylinderMesh = (pointX: Vector3, pointY: Vector3) => {
-  // edge from X to Y
-  var direction = new THREE.Vector3().subVectors(pointY, pointX);
-  const material = new THREE.MeshStandardMaterial({ color: "#5f8034" });
-  // Make the geometry (of "direction" length)
-  var geometry = new THREE.CylinderGeometry(
-    0.002,
-    0.002,
-    direction.length(),
-    6,
-    4,
-    false
-  );
-  // shift it so one end rests on the origin
-  geometry.applyMatrix4(
-    new THREE.Matrix4().makeTranslation(0, direction.length() / 2, 0)
-  );
-  // rotate it the right way for lookAt to work
-  geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(degToRad(90)));
-  // Make a mesh with the geometry
-  var mesh = new THREE.Mesh(geometry, material);
-  // Position it where we want
-  mesh.position.copy(pointX);
-  // And make it point to where we want
-  mesh.lookAt(pointY);
-
-  mesh.position.x += xOffset;
-  mesh.position.y += yOffset;
-  mesh.position.z += zOffset;
-
-  return mesh;
-};
-
-const Plant = (props: Props) => {
+const Plant = ({ lSystemState }: Props) => {
   const [objects, setObjects] = useState<JSX.Element[]>([]);
   const pot = useGLTF("assets/pot.glb");
-  const { scene, camera } = useThree();
-  const leaf = useGLTF("assets/leaf.glb");
+  const leafy = useGLTF("assets/leafy.glb");
+  const { scene } = useThree();
+  const currentGeometries = useRef<THREE.Mesh[]>([]);
 
   useEffect(() => {
-    console.log("pot", pot.nodes);
+    if (currentGeometries.current) {
+      currentGeometries.current.forEach((elem) => {
+        scene.remove(elem);
+      });
+    }
     generatePlant();
-  }, []);
+  }, [lSystemState, scene]);
 
-  const placeSphere = (point: Vector3) => {
-    const r = 0.04;
-    const geometry = new THREE.SphereGeometry(r, 5, 5, 0, 1.2, 0);
-    const material = new THREE.MeshStandardMaterial({ color: "#7fe04f" });
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.position.y -= r / 2;
-    sphere.position.x += point.x;
-    sphere.position.y += point.y;
-    sphere.position.z += point.z;
+  const makeCylinder = (pointX: Vector3, pointY: Vector3, w: number) => {
+    // edge from X to Y
+    var direction = new THREE.Vector3().subVectors(pointY, pointX);
+    const material = new THREE.MeshStandardMaterial({ color: "#5f8034" });
+    // Make the geometry (of "direction" length)
+    var geometry = new THREE.CylinderGeometry(
+      w * scaleBack,
+      w,
+      direction.length(),
+      6,
+      4,
+      false
+    );
+    // shift it so one end rests on the origin
+    geometry.applyMatrix4(
+      new THREE.Matrix4().makeTranslation(0, direction.length() / 2, 0)
+    );
+    // rotate it the right way for lookAt to work
+    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(degToRad(90)));
+    // Make a mesh with the geometry
+    var mesh = new THREE.Mesh(geometry, material);
+    // Position it where we want
+    mesh.position.copy(pointX);
+    // And make it point to where we want
+    mesh.lookAt(pointY);
 
-    scene.add(sphere);
+    mesh.position.x += offsetVector.x;
+    mesh.position.y += offsetVector.y;
+    mesh.position.z += offsetVector.z;
+    currentGeometries.current.push(mesh);
+    scene.add(mesh);
   };
 
   const generateSnowflake = () => {
@@ -120,38 +117,13 @@ const Plant = (props: Props) => {
     const r1 = 0.55;
     const r2 = 0.95;
     const a1 = -5;
-    const a2 = 30;
+    const a2 = lSystemState.angle;
     const y1 = 137;
     const y2 = 137;
-    const w0 = 5;
-    const q = 0.4;
-    const e = 0.0;
+    const w0 = 20;
+    const q = 0.45;
+    const e = 0.5;
     const min = 0.5;
-
-    // initialize params
-    // const iterations = 10;
-    // const r1 = 0.75;
-    // const r2 = 0.77;
-    // const a1 = 20;
-    // const a2 = -20;
-    // const y1 = 0;
-    // const y2 = 0;
-    // const w0 = 30;
-    // const q = 0.5;
-    // const e = 0.4;
-    // const min = 0.0;
-
-    // const iterations = 9;
-    // const r1 = 0.5;
-    // const r2 = 0.85;
-    // const a1 = 25;
-    // const a2 = -15;
-    // const y1 = 180;
-    // const y2 = 0;
-    // const w0 = 20;
-    // const q = 0.45;
-    // const e = 0.5;
-    // const min = 0.5;
 
     const axiom: ParameterizedSymbol[] = [{ symbol: "A", params: [100, w0] }];
 
@@ -209,7 +181,7 @@ const Plant = (props: Props) => {
 
   const drawSystem = (symbols: ParameterizedSymbol[]) => {
     const stack: Turtle[] = [];
-    // const newObjects = [];
+    const newObjects = [];
     const scale = 0.0015;
 
     // Set up state
@@ -217,6 +189,7 @@ const Plant = (props: Props) => {
       x: 0,
       y: 0,
       z: 0,
+      width: 0.01,
       front: new Vector3(0, 1, 0),
       out: new Vector3(0, 0, 1),
       // angle
@@ -234,20 +207,33 @@ const Plant = (props: Props) => {
           finalPoint.copy(initPoint);
           finalPoint.addScaledVector(turtle.front, current.params[0] * scale);
 
-          const mesh = cylinderMesh(initPoint, finalPoint);
-          scene.add(mesh);
+          makeCylinder(initPoint, finalPoint, turtle.width);
+          turtle.width = turtle.width * scaleBack;
 
-          //   newObjects.push(
-          //     <Line
-          //       points={[initPoint, finalPoint]}
-          //       color="#254620" // Default
-          //       lineWidth={1} // In pixels (default)
-          //     />
-          //   );
+          const elements = [0, 1, 2, 3];
+          const randomElement =
+            elements[Math.floor(Math.random() * elements.length)];
+          const dist = new Vector3(0, 0, 0).distanceTo(finalPoint);
 
-          //   newObjects.push(
-          //     <Cylinder position={[0, 0.5, 0]} scale={[0.1, 0.1, 1]} />
-          //   );
+          if (dist >= 0.5) {
+            console.log("more");
+            if (dist >= 1 || Math.random() < 0.5) {
+              newObjects.push(
+                <Clone
+                  scale={0.2}
+                  rotation={[0, randomElement * ((2 * Math.PI) / 4), 0]}
+                  position={
+                    new Vector3(
+                      finalPoint.x + offsetVector.x,
+                      finalPoint.y + offsetVector.y,
+                      finalPoint.z + offsetVector.z
+                    )
+                  }
+                  object={leafy.scene}
+                />
+              );
+            }
+          }
 
           // update state
           turtle.x = finalPoint.x;
@@ -290,7 +276,6 @@ const Plant = (props: Props) => {
 
           turtle.front = newFront;
           turtle.out = newOut;
-          //   turtle.pitch += degToRad(current.params[0]);
           break;
         }
         case "[":
@@ -299,6 +284,7 @@ const Plant = (props: Props) => {
             x: turtle.x,
             y: turtle.y,
             z: turtle.z,
+            width: turtle.width,
             front: turtle.front,
             out: turtle.out,
             yaw: turtle.yaw,
@@ -314,6 +300,7 @@ const Plant = (props: Props) => {
           turtle.y = state.y;
           turtle.z = state.z;
           turtle.front = state.front;
+          turtle.width = state.width;
           turtle.out = state.out;
           turtle.yaw = state.yaw;
           turtle.pitch = state.pitch;
@@ -324,13 +311,19 @@ const Plant = (props: Props) => {
       }
     }
 
-    // setObjects(newObjects);
+    setObjects(newObjects);
   };
 
   return (
-    <mesh scale={0.4} position={[xOffset, yOffset - 0.6, zOffset]}>
-      <primitive object={pot.nodes.pCylinder1} />
-    </mesh>
+    <group>
+      <mesh
+        scale={0.4}
+        position={[offsetVector.x, offsetVector.y - 0.6, offsetVector.z]}
+      >
+        <primitive object={pot.nodes.pCylinder1} />
+      </mesh>
+      {objects}
+    </group>
   );
 };
 

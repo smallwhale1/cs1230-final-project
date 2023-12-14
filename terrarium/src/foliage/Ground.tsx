@@ -1,31 +1,11 @@
-import React, { useRef } from "react";
-import {
-  Box3,
-  BufferGeometry,
-  CircleGeometry,
-  Clock,
-  EllipseCurve,
-  MathUtils,
-  PlaneGeometry,
-  ShaderMaterial,
-  TextureLoader,
-  Vector2,
-  Vector3,
-} from "three";
+import { useRef } from "react";
+import Stats from "stats.js";
+import { CircleGeometry, TextureLoader, Vector2, Vector3 } from "three";
 import { extend, useLoader, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
-import {
-  BufferAttribute,
-  Color,
-  Mesh,
-  MeshStandardMaterial,
-  Object3D,
-} from "three";
+import { Mesh, MeshStandardMaterial } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useGLTF } from "@react-three/drei";
-// import { Water } from 'Water2.js'
 import { Water } from "./Water2";
-import useSpline from "@splinetool/r3f-spline";
 import { useFrame } from "@react-three/fiber";
 
 extend({ Water });
@@ -36,24 +16,19 @@ const MainScene = () => {
   // thanks to https://polyhaven.com/textures !
   const gltf = useLoader(
     GLTFLoader,
-    process.env.PUBLIC_URL + "/models/terrarium-flowered.glb"
+    process.env.PUBLIC_URL + "/models/terrarium-w-butterfly.glb"
   );
 
   useEffect(() => {
     if (!gltf) return;
 
     gltf.scene.traverse((object) => {
-      console.log(object.name, object.type); // Log the name and type of each object
-
       if (object.isObject3D) {
         const mesh = object as Mesh;
-
-        // Handle mesh-specific logic
-        // if (mesh.material instanceof MeshStandardMaterial) {
-        //   mesh.material.color = new Color(0.8, 0.9, 0.9);
-        // }
+        if (mesh.name === "wings") {
+          mesh.visible = false;
+        }
       } else if (object) {
-        // Handle group-specific logic
         console.log("Group found: ", object);
       }
     });
@@ -96,7 +71,7 @@ const WaterComponent = (props: Props) => {
     });
     console.log("local ", object.position);
 
-    object.position.y -= 1.8;
+    object.position.y -= 1.0;
 
     var target = new Vector3(0, 0, 0);
     const ret = object.getWorldPosition(target);
@@ -110,7 +85,7 @@ const WaterComponent = (props: Props) => {
     object.geometry && (
       <primitive
         object={water}
-        position={[-0.7399999926239252, 0.005, -0.66368191229517947]}
+        position={[-0.7399999926239252, 0.001, -0.66368191229517947]}
         rotation={[-Math.PI / 2, 0, 0]}
         // rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
         // scale={0.01}
@@ -120,16 +95,83 @@ const WaterComponent = (props: Props) => {
   );
 };
 
+const MyComponentWithStats = () => {
+  const stats = useRef(new Stats());
+
+  useEffect(() => {
+    stats.current.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(stats.current.dom);
+
+    return () => {
+      document.body.removeChild(stats.current.dom);
+    };
+  }, []);
+
+  useFrame(() => {
+    stats.current.begin();
+    // monitored code goes here
+    stats.current.end();
+  });
+
+  // ...rest of your component
+};
+
 const SceneAdjustments = (props: Props) => {
+  MyComponentWithStats();
   const { scene } = useThree();
   const object = scene.getObjectByName("bench");
   console.log("looking for bench, ", object);
   if (object) {
     object.position.y -= 1.7;
   }
-  // if (object && object instanceof Mesh && object.material && object.geometry) {
 
-  // }
+  const pond = scene.getObjectByName("Ellipse_4");
+  if (pond) {
+    pond.position.y -= 1.7;
+  }
+
+  const diffuseMap = useLoader(
+    TextureLoader,
+    process.env.PUBLIC_URL + "/textures/rock_diffuse.jpg"
+  );
+  const normalMap = useLoader(
+    TextureLoader,
+    process.env.PUBLIC_URL + "/textures/rock_normal.jpg"
+  );
+  const aoRoughMetalMap = useLoader(
+    TextureLoader,
+    process.env.PUBLIC_URL + "/textures/rock_ao.jpg"
+  );
+
+  const floorMat = new MeshStandardMaterial({
+    map: diffuseMap,
+    normalMap: normalMap,
+    aoMap: aoRoughMetalMap,
+    roughnessMap: aoRoughMetalMap,
+    metalnessMap: aoRoughMetalMap,
+  });
+  const rock = scene.getObjectByName("big_rocks");
+
+  if (rock) {
+    const rock1 = rock.children[0];
+    const rock2 = rock.children[1];
+    const rock3 = rock.children[2];
+
+    if (rock1 && rock1 instanceof Mesh) {
+      rock1.material = floorMat;
+    }
+    if (rock2 && rock2 instanceof Mesh) {
+      rock2.material = floorMat;
+    }
+    if (rock3 && rock3 instanceof Mesh) {
+      rock3.material = floorMat;
+    }
+  }
+
+  const wings = scene.getObjectByName("wings");
+  if (wings) {
+    console.log("bf found");
+  }
 };
 
 const Ground = (props: Props) => {

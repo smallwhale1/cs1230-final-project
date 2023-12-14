@@ -17,11 +17,11 @@ const GlassSphere = ({ setSceneLoaded }: Props) => {
       setSceneLoaded(true);
     });
     const material = new THREE.MeshPhysicalMaterial({
-      roughness: 0.05,
-      transmission: 1,
-      thickness: 0.1, // refract
-      // ior: 1.1,
-      // reflectivity: 0.1,
+      roughness: 0.0,
+      transmission: 1.01,
+      thickness: 0.8, // refract
+      // ior: 1.5,
+      // reflectivity: 0.5,
       envMap: hdrEquirect,
     });
 

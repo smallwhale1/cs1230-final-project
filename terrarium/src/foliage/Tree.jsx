@@ -1,43 +1,16 @@
 import { Clone, useGLTF } from "@react-three/drei";
 import { FoliageMaterial } from "./FoliageMaterial";
-import { Euler, MeshStandardMaterial, Vector3, TextureLoader } from "three";
+import { TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 
-export function Tree({ position, rotation }) {
+export function Tree() {
   const [windSpeed, setWindSpeed] = useState(1.0);
-  const tree = useGLTF("https://douges.dev/static/tree.glb");
+  const tree = useGLTF("/assets/tree.glb");
   const tree2 = useGLTF("/assets/working-tree.glb");
 
-  const barkTexture = useLoader(TextureLoader, "/textures/bark_texture.png");
-  const normalMap = useLoader(TextureLoader, "/textures/bark_normal.png");
-  const roughnessMap = useLoader(TextureLoader, "/textures/bark_roughness.png");
-  const displacementMap = useLoader(
-    TextureLoader,
-    "/textures/bark_displacement.png"
-  );
-
-  useEffect(() => {
-    console.log("nodes", tree2.nodes);
-  }, []);
-
-  // const trunkMat = MeshStandardMaterial(
-  // map={barkTexture},
-  // normalMap={normalMap},
-  // roughnessMap={roughnessMap},
-  // displacementMap={displacementMap},
-  // roughness=0.5,
-  // metalness=0,
-  // );
-
   return (
-    <group
-      name="tree"
-      rotation={rotation}
-      position={position}
-      // onPointerDown={handleShake}
-      scale={1}
-    >
+    <group name="tree" scale={1}>
       <Clone
         position={[-0.1, 0, 0.1]}
         rotation={[0, Math.PI / 1.8, 0]}
@@ -47,11 +20,7 @@ export function Tree({ position, rotation }) {
         object={tree2.nodes.Cube}
         inject={
           <meshStandardMaterial
-            color={"#473105"}
-            // map={barkTexture}
-            // normalMap={normalMap}
-            // roughnessMap={roughnessMap}
-            // displacementMap={displacementMap}
+            color={"#472405"}
             roughness={0.9}
             envMapIntensity={0.2}
             metalness={0}
