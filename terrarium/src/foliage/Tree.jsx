@@ -1,8 +1,6 @@
 import { Clone, useGLTF } from "@react-three/drei";
 import { FoliageMaterial } from "./FoliageMaterial";
-import { TextureLoader } from "three";
-import { useLoader } from "@react-three/fiber";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function Tree() {
   const [windSpeed, setWindSpeed] = useState(1.0);

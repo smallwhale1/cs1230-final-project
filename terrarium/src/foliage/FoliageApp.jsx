@@ -1,6 +1,6 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Sky from "./Sky";
 import { Tree } from "./Tree";
 import Ground from "./Ground";
@@ -27,7 +27,7 @@ const SceneAudio = () => {
     sound.play();
   });
 
-  return null; // Nothing needs to be rendered by this component
+  return null;
 };
 
 const FoliageApp = () => {
