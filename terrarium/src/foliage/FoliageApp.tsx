@@ -127,8 +127,16 @@ const FoliageApp = () => {
           gap: "8px",
         }}
       >
-        <div style={{ width: 200 }}>
+        <div
+          style={{
+            width: 200,
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
           {/* Angle 1 */}
+          <label>Rotation Paramter 1</label>
           <Slider
             onChange={(e, val) => {
               setLSystemState((prev) => ({ ...prev, angle1: val as number }));
@@ -142,6 +150,7 @@ const FoliageApp = () => {
             valueLabelDisplay="auto"
           />
           {/* Angle 2 */}
+          <label>Rotation Paramter 2</label>
           <Slider
             onChange={(e, val) => {
               setLSystemState((prev) => ({ ...prev, angle2: val as number }));
@@ -153,6 +162,7 @@ const FoliageApp = () => {
             aria-label="Small"
             valueLabelDisplay="auto"
           />
+          <label>Leaf Chance </label>
           <Slider
             onChange={(e, val) => {
               setLSystemState((prev) => ({
