@@ -336,7 +336,7 @@ Water.WaterShader = {
 
 			// calculate normal vector
 			// reduce red and green channels to make less movement / calmer ripples
-			vec3 normal = normalize( vec3( normalColor.r - 0.75, normalColor.b, normalColor.g - 0.75) );
+			vec3 normal = normalize( vec3( normalColor.r - 0.5, normalColor.b, normalColor.g - 0.5) );
 
 			// calculate the fresnel term to blend reflection and refraction maps
 			float theta = max( dot( toEye, normal ), 0.0 );
@@ -356,7 +356,6 @@ Water.WaterShader = {
 			#include <tonemapping_fragment>
 			#include <colorspace_fragment>
 			#include <fog_fragment>
-
 		}`
 
 };
