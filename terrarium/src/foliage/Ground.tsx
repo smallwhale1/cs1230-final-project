@@ -5,10 +5,7 @@ import { extend, useLoader, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { Mesh, MeshStandardMaterial } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useGLTF } from "@react-three/drei";
-// import { Water } from 'Water2.js'
 import { Water } from "./Water2";
-import useSpline from "@splinetool/r3f-spline";
 import { useFrame } from "@react-three/fiber";
 
 extend({ Water });
